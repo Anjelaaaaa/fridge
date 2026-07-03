@@ -1,0 +1,67 @@
+h1 {
+    font-size: 300px;
+    text-shadow: 
+    1px 9px rgba(194, 160, 173, 0.527),
+    1px 10px rgba(194, 160, 173, 0.527),
+    1px 18px 6px rgba(173, 129, 147, 0.527),
+    1px 22px 10px rgba(173, 129, 147, 0.527),
+    1px 25px 35px rgba(201, 153, 174, 0.527),
+    1px 30px 60px rgba(189, 144, 163, 0.527);
+    color: rgb(245, 176, 201);
+    margin: 0px;
+    z-index: 0;
+    position: relative;
+}
+.d {
+    text-shadow: 
+    1px 9px rgba(194, 179, 160, 0.527),
+    1px 10px rgba(194, 179, 160, 0.527),
+    1px 18px 6px rgba(173, 165, 129, 0.527),
+    1px 22px 10px rgba(173, 165, 129, 0.527),
+    1px 25px 35px rgba(173, 165, 129, 0.527),
+    1px 30px 60px rgba(173, 165, 129, 0.527);
+    color: rgb(230, 206, 129);
+}
+.e {
+    text-shadow: 
+    1px 9px rgba(160, 166, 194, 0.527),
+    1px 10px rgba(160, 166, 194, 0.527),
+    1px 18px 6px rgba(129, 130, 173, 0.527),
+    1px 22px 10px rgba(129, 130, 173, 0.527),
+    1px 25px 35px rgba(129, 130, 173, 0.527),
+    1px 30px 60px rgba(129, 130, 173, 0.527);
+    color: rgb(132, 180, 235);
+}
+h2 {
+    color: rgb(128, 128, 128);
+    font-size: 70px;
+}
+h3 {
+    color: rgb(117, 117, 117);
+}
+body {
+    background-color: rgb(216, 231, 250);
+    font-family: sans-serif;
+    text-align: center;
+}
+.a {
+    width: 120px;
+    position: relative;
+    top: 270px;
+    left: 130px;
+    z-index: 1;
+}
+.b {
+    width: 120px;
+    position: relative;
+    top: 282px;
+    right: 163px;
+    z-index: 1;
+}
+.c {
+    width: 120px;
+    position: relative;
+    top: 88px;
+    left: 46px;
+    z-index: 1;
+}

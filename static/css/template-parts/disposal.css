@@ -1,0 +1,38 @@
+#disposal {
+    background-color: #D9D7D7;
+}
+.disposal-conteiner {
+    max-width: 1720px;
+    padding: 50px 100px 0 100px;
+    margin: auto;
+    height: 950px;
+    position: relative;
+    display: block;
+}
+.disposal-header {
+    color: #1F1F1F;
+    font-size: 80px;
+    line-height: 99px;
+}
+.disposal-header1 {
+    color: #1F1F1F;
+    font-size: 32px;
+    line-height: 40px;
+    max-width: 718px;
+    margin-top: 140px;
+}
+.disposal-description {
+    color: #1F1F1F;
+    font-size: 24px;
+    line-height: 30px;
+    max-width: 732px;
+    margin-top: 140px;
+}
+.snowflakes {
+    position: absolute;
+    top: -500px;
+    right: -230px;
+    z-index: 1;
+    height: 1860px;
+    overflow: hidden;
+}

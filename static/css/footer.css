@@ -1,0 +1,41 @@
+.footer-conteiner {
+    display: flex;
+    max-width: 1720px;
+    padding: 50px 100px 0px 100px;
+    background-color: #1F1F1F;
+    border: 3px solid #D9D7D7;
+    border-radius: 20px;
+    height: 250px;
+    margin: auto;
+}
+.footer-text {
+    color: white;
+    font-size: 24px;
+    line-height: 30px;
+    margin-top: 10px;
+}
+.footer-rules {
+    margin-top: 66px;
+    color: white;
+    font-size: 24px;
+    line-height: 30px;
+}
+.circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    width: 107px;
+    height: 107px;
+    border-radius: 50%;
+    background-color: #D9D7D7;
+}
+.footer-right {
+    margin-left: auto;
+}
+.number {
+    margin-top: 30px;
+    font-size: 60px;
+    color: #ffffff;
+    font-weight: bold;
+}

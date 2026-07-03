@@ -1,0 +1,25 @@
+.logo-and-nav {
+    display: flex; 
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1720px;
+    margin: auto;
+}
+.logo {
+    font-size: 80px; 
+    color: #ffffff;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.25);
+}
+.nav-links {
+    display: flex;
+    gap: 40px;
+}
+.nav-links a {
+    text-decoration: none; 
+    color: #ffffff;
+    font-size: 24px;
+    transition: color 0.3s ease; 
+}
+.nav-links a:hover {
+    color: #000;
+}

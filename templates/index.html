@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ремонт холодильников</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/template-parts/main-page.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/template-parts/disposal.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/template-parts/contact.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon/favicon.ico') }}" type="image/x-icon">
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon/favicon-16x16.png') }}">
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon/favicon-32x32.png') }}">
+</head>
+<body>
+    <header>
+        {% include 'header.html' %}
+    </header>
+
+    <main>
+        {% include 'template-parts/main.html' %}
+        {% include 'template-parts/about.html' %}
+        {% include 'template-parts/repair.html' %}
+        {% include 'template-parts/pricing.html' %}
+        {% include 'template-parts/disposal.html' %}
+        {% include 'template-parts/contact.html' %}
+
+        <div id="phoneModal" class="modal">
+            <div class="modal-content">
+                <span class="modal-close">&times;</span>
+                <div class="modal-number">8 913 783 38 14</div>
+                <div class="modal-text">Андрей</div>
+            </div>
+        </div>        
+    </main>
+
+    <footer>
+        {% include 'footer.html' %}
+    </footer>
+</body>
+<script>
+    let lastScroll = 0;
+    const header = document.querySelector('header');
+
+    window.addEventListener('scroll', () => {
+        const currentScroll = window.pageYOffset;
+        
+        if (currentScroll > lastScroll && currentScroll > 100) {
+            // Скролл вниз - скрываем хэдер
+            header.style.transform = 'translateY(-100%)';
+        } else {
+            // Скролл вверх - показываем хэдер
+            header.style.transform = 'translateY(0)';
+        }
+        
+        lastScroll = currentScroll;
+    });
+</script>
+<script>
+    // Для main-button
+    document.querySelector('.main-button').addEventListener('click', function(e) {
+        const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+        
+        if (isMobile) {
+            window.location.href = 'tel:89137833814';
+        } else {
+            document.getElementById('phoneModal').classList.add('show');
+        }
+    });
+
+    // Для contact-button
+    document.querySelector('.contact-button').addEventListener('click', function(e) {
+        const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+        
+        if (isMobile) {
+            window.location.href = 'tel:89137833814';
+        } else {
+            document.getElementById('phoneModal').classList.add('show');
+        }
+    });
+
+    // Закрытие модалки
+    document.querySelector('.modal-close').addEventListener('click', function() {
+        document.getElementById('phoneModal').classList.remove('show');
+    });
+
+    document.getElementById('phoneModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            this.classList.remove('show');
+        }
+    });
+</script>
+</html>

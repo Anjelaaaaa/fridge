@@ -1,0 +1,53 @@
+.main-conteiner {
+    display: flex;
+    align-items: center;
+    max-width: 1720px;
+    padding: 50px 100px 0 100px;
+    margin: auto;
+    height: 950px;
+}
+.fridge-main {
+    width: 373px;
+}
+.main-header {
+    color: #ffffff;
+    margin-left: 40px;
+    font-size: 110px;
+    line-height: 150px;
+}
+.main-description {
+    margin-left: 40px;
+    color: #ffffff;
+    font-size: 24px;
+    margin-top: 50px;
+}
+.main-button {
+    border: 3px solid #ffffff;
+    width: 547px;
+    height: 80px;
+    font-size: 32px;
+    margin-left: 40px;
+    color: #ffffff;
+    border-radius: 10px;
+    margin-top: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 1s;
+}
+.main-button:hover {
+    background-color: #ffffff;
+    color: #1F1F1F;
+    transform: scale(1.02);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    transition: 1s;
+}
+.main-button:active {
+    transform: scale(0.98);
+    opacity: 0.7;
+}
+.snowflake {
+    position: absolute;
+    top: 700px;
+    right: 100px;
+}

@@ -30,6 +30,7 @@
 }
 .snowflakes {
     position: absolute;
+    z-index: -1;
     top: -500px;
     right: -230px;
     z-index: 1;

@@ -1,0 +1,57 @@
+#about {
+    background-color: #D9D7D7;
+}
+.about-conteiner {
+    position: relative;
+    z-index: 2;
+    max-width: 1720px;
+    padding: 50px 100px 0 100px;
+    margin: auto;
+    height: 950px;
+    position: relative;
+    display: block;
+}
+.about-header {
+    color: #1F1F1F;
+    font-size: 80px;
+    line-height: 99px;
+}
+.about-cards {
+    display: flex;
+    gap: 40px;
+    justify-content: space-between;
+    margin-top: 100px;
+}
+.about-card {
+    position: relative;
+    flex: 1;
+    background: #1F1F1F;
+    border-radius: 20px;
+    padding: 50px;
+    color: #ffffff;
+    height: 560px;
+    transition: 0.3s;
+}
+.about-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
+}
+.about-title {
+    font-size: 32px;
+    line-height: 40px;
+}
+.about-text {
+    font-size: 24px;
+    line-height: 30px;
+    margin-top: 55px;
+}
+.about-number {
+    position: absolute;
+    bottom: -60px;
+    right: -17px;
+    font-family: 'Tourney', sans-serif;
+    font-size: 400px;
+    color: #D9D7D7;
+    line-height: 1;
+}

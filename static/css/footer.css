@@ -36,7 +36,7 @@
 .number {
     margin-top: 30px;
     font-size: 50px;
-    color: #ffffff;
+    color: #ffffff !important;
     font-weight: bold;
 }
 @media (max-width: 1720px) {

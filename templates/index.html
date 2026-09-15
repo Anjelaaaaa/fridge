@@ -16,6 +16,46 @@
     <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon/favicon.ico') }}" type="image/x-icon">
     <link rel="icon" href="{{ url_for('static', filename='images/favicon/favicon-16x16.png') }}">
     <link rel="icon" href="{{ url_for('static', filename='images/favicon/favicon-32x32.png') }}">
+
+    <link rel="canonical" href="{{ request.base_url }}">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#0A1628">
+    <meta name="author" content="FRIDGE — сервис ремонта холодильников">
+    <meta name="geo.region" content="RU-NVS">
+    <meta name="geo.placename" content="Новосибирск">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="ru_RU">
+    <meta property="og:site_name" content="FRIDGE — ремонт холодильников">
+    <meta property="og:title" content="Ремонт холодильников в Новосибирске | Профессиональный ремонт">
+    <meta property="og:description" content="Профессиональный ремонт холодильников в Новосибирске. Бесплатная диагностика, гарантия 1 год. Выезд мастера на дом.">
+    <meta property="og:url" content="{{ request.base_url }}">
+    <meta property="og:image" content="{{ url_for('static', filename='images/main/fridge.svg', _external=True) }}">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "name": "FRIDGE — ремонт холодильников",
+        "description": "Профессиональный ремонт холодильников в Новосибирске. Бесплатная диагностика при ремонте, гарантия 1 год, выезд мастера на дом.",
+        "url": "{{ request.base_url }}",
+        "telephone": "+7 952 936 82 20",
+        "image": "{{ url_for('static', filename='images/main/fridge.svg', _external=True) }}",
+        "priceRange": "₽₽",
+        "areaServed": {
+            "@type": "City",
+            "name": "Новосибирск"
+        },
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "улица Свободы, 304А",
+            "addressLocality": "Новосибирск",
+            "addressCountry": "RU"
+        }
+    }
+    </script>
 </head>
 <body>
     <header>

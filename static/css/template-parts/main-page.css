@@ -1,75 +1,186 @@
+/* ===== MAIN БЛОК ===== */
 .main-conteiner {
     display: flex;
-    position: relative; 
+    position: relative;
     align-items: center;
     max-width: 1720px;
-    padding-top: 100px;
     padding: 100px 100px 0 100px;
     margin: auto;
     height: min(calc(100vh - 100px), 900px);
     overflow: hidden;
+    background: 
+        radial-gradient(ellipse at 70% 50%, rgba(0, 120, 255, 0.12) 0%, transparent 60%),
+        radial-gradient(ellipse at 30% 80%, rgba(0, 200, 255, 0.06) 0%, transparent 40%),
+        linear-gradient(180deg, #0A1628 0%, #14203A 100%);
 }
+
+/* Пульсирующая подсветка */
+.main-conteiner::before {
+    content: '';
+    position: absolute;
+    top: 20%;
+    right: 10%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(74, 158, 255, 0.05) 0%, transparent 70%);
+    border-radius: 50%;
+    z-index: 0;
+    animation: pulseGlow 6s ease-in-out infinite;
+}
+
 .fridge-main {
     position: relative;
     width: 373px;
     z-index: 1;
+    filter: drop-shadow(0 0 40px rgba(74, 158, 255, 0.2));
 }
+
 .main-header {
     color: #ffffff;
     margin-left: 40px;
     font-size: 70px;
     line-height: 150px;
+    text-shadow: 0 0 40px rgba(0, 120, 255, 0.15);
+    position: relative;
+    z-index: 1;
 }
+
+.main-header span {
+    background: linear-gradient(135deg, #4A9EFF, #00D4FF);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.main-header::after {
+    content: '';
+    display: block;
+    width: 200px;
+    height: 4px;
+    background: linear-gradient(90deg, #4A9EFF, #00D4FF, transparent);
+    margin-top: 10px;
+    border-radius: 2px;
+    box-shadow: 0 0 20px rgba(74, 158, 255, 0.3);
+}
+
 .main-title {
     margin-left: 40px;
     color: #ffffff;
     font-size: 24px;
     margin-top: 50px;
+    opacity: 0.95;
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
 }
+
 .main-description {
     margin-left: 40px;
-    color: #ffffff;
+    color: rgba(255, 255, 255, 0.8);
     font-size: 16px;
     margin-top: 50px;
+    position: relative;
+    z-index: 1;
+    max-width: 800px;
 }
+
+/* КНОПКА — СИНЯЯ (без белой обводки) */
 .main-button {
-    border: 3px solid #ffffff;
+    border: none;
+    background: linear-gradient(135deg, #4A9EFF, #0066FF);
     width: 547px;
     height: 80px;
     font-size: 24px;
     margin-left: 40px;
     color: #ffffff;
-    border-radius: 10px;
+    border-radius: 12px;
     margin-top: 100px;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
-    transition: 1s;
+    transition: 0.5s;
     z-index: 1;
+    box-shadow: 0 4px 30px rgba(0, 102, 255, 0.3);
+    cursor: pointer;
+    font-weight: 500;
+    letter-spacing: 1px;
+    overflow: hidden;
 }
+
+.main-button::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(135deg, #4A9EFF, #00D4FF, #4A9EFF);
+    border-radius: 14px;
+    z-index: -1;
+    opacity: 0;
+    transition: 0.5s;
+    filter: blur(8px);
+}
+
+.main-button::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #4A9EFF, #0066FF);
+    border-radius: 12px;
+    z-index: -1;
+}
+
 .main-button:hover {
-    background-color: #ffffff;
-    color: #1F1F1F;
-    transform: scale(1.02);
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-    transition: 1s;
+    background: linear-gradient(135deg, #6BB5FF, #0055E6);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 50px rgba(0, 102, 255, 0.5);
 }
+
+.main-button:hover::before {
+    opacity: 1;
+}
+
 .main-button:active {
-    transform: scale(0.98);
-    opacity: 0.7;
+    transform: scale(0.97);
+    opacity: 0.8;
 }
+
+/* СНЕЖИНКА — белая, с анимацией */
 .snowflake {
     position: absolute;
     top: 700px;
     right: 100px;
+    filter: drop-shadow(0 0 30px rgba(74, 158, 255, 0.2));
+    animation: floatSnow 8s ease-in-out infinite;
+    z-index: 1;
 }
+
+/* КРУГИ — голубоватые (без изменения размера) */
 .circles {
     position: absolute;
     top: 150px;
     right: 100px;
     z-index: 0;
+    opacity: 0.6;
+    animation: rotateCircles 7s linear infinite;
 }
+
+/* АНИМАЦИИ */
+@keyframes floatSnow {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-25px) rotate(15deg); }
+}
+
+@keyframes pulseGlow {
+    0%, 100% { transform: scale(1); opacity: 0.6; }
+    50% { transform: scale(1.4); opacity: 1; }
+}
+
+@keyframes rotateCircles {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ===== ТВОЙ АДАПТИВ (БЕЗ ИЗМЕНЕНИЙ) ===== */
 @media (max-width: 1720px) {
     .main-conteiner {
         padding: 90px 80px 0 80px;
@@ -83,6 +194,7 @@
         width: 330px;
     }
 }
+
 @media (max-width: 1530px) {
     .main-conteiner {
         padding: 80px 60px 0 60px;
@@ -120,6 +232,7 @@
         top: 630px;
     }
 }
+
 @media (max-width: 1260px) {
     .main-conteiner {
         padding: 70px 50px 0 50px;
@@ -157,6 +270,7 @@
         top: 600px;
     }
 }
+
 @media (max-width: 1024px) {
     .main-conteiner {
         padding: 60px 40px 0 40px;
@@ -194,6 +308,7 @@
         top: 550px;
     }
 }
+
 @media (max-width: 768px) {
     .main-conteiner {
         flex-direction: column;
@@ -202,6 +317,12 @@
         height: min(calc(100vh - 50px), 780px);
         gap: 15px;
         justify-content: center;
+        background: 
+            radial-gradient(ellipse at center, rgba(0, 120, 255, 0.08) 0%, transparent 70%),
+            linear-gradient(180deg, #0A1628 0%, #14203A 100%);
+    }
+    .main-conteiner::before {
+        display: none;
     }
     .fridge-main {
         width: 150px;
@@ -212,6 +333,9 @@
         line-height: 48px;
         margin-left: 0;
         text-align: center;
+    }
+    .main-header::after {
+        margin: 10px auto 0 auto;
     }
     .main-title {
         font-size: 16px;
@@ -238,6 +362,7 @@
         top: 650px;
     }
 }
+
 @media (max-width: 600px) {
     .main-conteiner {
         padding: 40px 20px 0 20px;
@@ -271,6 +396,7 @@
         top: 600px;
     }
 }
+
 @media (max-width: 570px) {
     .snowflake {
         right: 60px;
@@ -285,6 +411,7 @@
         top: 600px;
     }
 }
+
 @media (max-width: 480px) {
     .main-conteiner {
         padding: 30px 15px 0 15px;
@@ -318,6 +445,7 @@
         top: 550px;
     }
 }
+
 @media (max-width: 400px) {
     .main-conteiner {
         padding: 20px 10px 0 10px;
@@ -352,6 +480,7 @@
         top: 480px;
     }
 }
+
 @media (max-height: 500px) and (orientation: landscape) {
     .main-conteiner {
         height: 100vh;

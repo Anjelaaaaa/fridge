@@ -1,28 +1,92 @@
+/* ===== HEADER ===== */
+header {
+    background: rgba(10, 22, 40, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 0 100px;
+    height: 100px;
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 1000;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid rgba(74, 158, 255, 0.1);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+}
+
 .logo-and-nav {
-    display: flex; 
+    display: flex;
     justify-content: space-between;
     align-items: center;
     max-width: 1720px;
     margin: auto;
+    height: 100%;
 }
+
 .logo {
-    font-size: 80px; 
-    color: #ffffff;
-    text-shadow: 0 0 20px rgba(255, 255, 255, 0.25);
+    font-size: 80px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #ffffff 30%, #4A9EFF 70%, #00D4FF 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: none;
+    filter: drop-shadow(0 0 30px rgba(74, 158, 255, 0.15));
+    transition: 0.3s;
 }
+
+.logo:hover {
+    filter: drop-shadow(0 0 50px rgba(74, 158, 255, 0.3));
+    transform: scale(1.02);
+}
+
 .nav-links {
     display: flex;
     gap: 40px;
 }
+
 .nav-links a {
-    text-decoration: none; 
-    color: #ffffff;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.8);
     font-size: 24px;
-    transition: color 0.3s ease; 
+    transition: all 0.3s ease;
+    position: relative;
+    padding: 5px 0;
 }
+
+/* Подчёркивание при наведении */
+.nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #4A9EFF, #00D4FF);
+    transition: width 0.3s ease;
+    border-radius: 2px;
+    box-shadow: 0 0 10px rgba(74, 158, 255, 0.3);
+}
+
 .nav-links a:hover {
-    color: #000;
+    color: #ffffff;
 }
+
+.nav-links a:hover::after {
+    width: 100%;
+}
+
+/* Активная ссылка */
+.nav-links a.active {
+    color: #4A9EFF;
+}
+
+.nav-links a.active::after {
+    width: 100%;
+}
+
+/* ===== АДАПТИВ ===== */
 @media (max-width: 1720px) {
     header {
         padding: 0 80px;
@@ -71,7 +135,8 @@
 @media (max-width: 1024px) {
     header {
         padding: 0 40px;
-        height: 60px;
+        height: 65px;
+        backdrop-filter: blur(15px);
     }
     .logo {
         font-size: 44px;
@@ -86,12 +151,14 @@
 
 @media (max-width: 768px) {
     header {
-        padding: 10px 30px;
+        padding: 12px 30px;
         height: auto;
+        backdrop-filter: blur(15px);
+        border-bottom: 1px solid rgba(74, 158, 255, 0.05);
     }
     .logo-and-nav {
         flex-direction: column;
-        gap: 10px;
+        gap: 12px;
         height: auto;
     }
     .logo {
@@ -105,11 +172,14 @@
     .nav-links a {
         font-size: 16px;
     }
+    .nav-links a::after {
+        bottom: -4px;
+    }
 }
 
 @media (max-width: 600px) {
     header {
-        padding: 8px 20px;
+        padding: 10px 20px;
     }
     .logo {
         font-size: 30px;
@@ -124,7 +194,7 @@
 
 @media (max-width: 480px) {
     header {
-        padding: 6px 15px;
+        padding: 8px 15px;
     }
     .logo {
         font-size: 24px;
@@ -139,7 +209,7 @@
 
 @media (max-width: 400px) {
     header {
-        padding: 5px 10px;
+        padding: 6px 10px;
     }
     .logo {
         font-size: 20px;
@@ -156,6 +226,7 @@
     header {
         padding: 5px 30px;
         height: 60px;
+        backdrop-filter: blur(10px);
     }
     .logo-and-nav {
         flex-direction: row;

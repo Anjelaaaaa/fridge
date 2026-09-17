@@ -3,15 +3,19 @@
     display: flex;
     position: relative;
     align-items: center;
-    max-width: 1720px;
-    padding: 100px 100px 0 100px;
+    /* Секция во всю ширину: фон доходит до краёв экрана, а контент держится
+       в тех же границах, что и остальные блоки, за счёт общего --gutter.
+       Раньше здесь стоял max-width: 1720px, из-за чего по краям вылезал
+       тёмный фон main двумя полосами. */
+    max-width: none;
+    padding: 100px var(--gutter) 0;
     margin: auto;
     height: min(calc(100vh - 100px), 900px);
     overflow: hidden;
-    background: 
-        radial-gradient(ellipse at 70% 50%, rgba(0, 120, 255, 0.12) 0%, transparent 60%),
-        radial-gradient(ellipse at 30% 80%, rgba(0, 200, 255, 0.06) 0%, transparent 40%),
-        linear-gradient(180deg, #0A1628 0%, #14203A 100%);
+    background:
+        radial-gradient(ellipse at 70% 50%, rgba(30, 94, 255, 0.12) 0%, transparent 60%),
+        radial-gradient(ellipse at 30% 80%, rgba(91, 147, 255, 0.06) 0%, transparent 40%),
+        linear-gradient(180deg, #0F2438 0%, #17334E 100%);
 }
 
 /* Пульсирующая подсветка */
@@ -22,7 +26,7 @@
     right: 10%;
     width: 600px;
     height: 600px;
-    background: radial-gradient(circle, rgba(74, 158, 255, 0.05) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(30, 94, 255, 0.05) 0%, transparent 70%);
     border-radius: 50%;
     z-index: 0;
     animation: pulseGlow 6s ease-in-out infinite;
@@ -32,48 +36,64 @@
     position: relative;
     width: 373px;
     z-index: 1;
-    filter: drop-shadow(0 0 40px rgba(74, 158, 255, 0.2));
+    filter: drop-shadow(0 0 40px rgba(30, 94, 255, 0.2));
+}
+
+.main-eyebrow {
+    margin-left: 40px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #8FB4FF;
+    padding: 9px 18px;
+    border: 1px solid rgba(30, 94, 255, 0.3);
+    border-radius: 100px;
+    background: rgba(30, 94, 255, 0.08);
+    position: relative;
+    z-index: 1;
 }
 
 .main-header {
     color: #ffffff;
     margin-left: 40px;
-    font-size: 70px;
-    line-height: 150px;
-    text-shadow: 0 0 40px rgba(0, 120, 255, 0.15);
+    font-size: 72px;
+    font-weight: 700;
+    line-height: 1.12;
+    margin-top: 26px;
+    text-shadow: 0 0 40px rgba(30, 94, 255, 0.15);
     position: relative;
     z-index: 1;
 }
 
 .main-header span {
-    background: linear-gradient(135deg, #4A9EFF, #00D4FF);
+    background: linear-gradient(135deg, #1E5EFF, #5B93FF);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
 
+<<<<<<< HEAD
 .main-header::after {
     content: '';
     display: block;
-    width: 200px;
-    height: 4px;
-    background: linear-gradient(90deg, #4A9EFF, #00D4FF, transparent);
-    margin-top: 10px;
-    border-radius: 2px;
-    box-shadow: 0 0 20px rgba(74, 158, 255, 0.3);
-}
-
-.main-title {
-    margin-left: 40px;
-    color: #ffffff;
     font-size: 24px;
+<<<<<<< HEAD
     margin-top: 50px;
+=======
+    line-height: 1.4;
+    margin-top: 28px;
+>>>>>>> f7a68854ec57a7c4b9cb1d2acf908957818b7d42
     opacity: 0.95;
     position: relative;
     z-index: 1;
     max-width: 1200px;
 }
 
+<<<<<<< HEAD
 .main-description {
     margin-left: 40px;
     color: rgba(255, 255, 255, 0.8);
@@ -95,10 +115,75 @@
     color: #ffffff;
     border-radius: 12px;
     margin-top: 100px;
+=======
+
+/* Кнопка */
+.main-actions {
+    margin-left: 40px;
+    margin-top: 40px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Холодильник + плашки, выглядывающие из-за него */
+.hero-fridge {
+    position: relative;
+    flex-shrink: 0;
+    z-index: 1;
+}
+/* Плашки лежат ПОД холодильником (z-index ниже) и выглядывают из-за его левого края */
+.main-stats {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+}
+.main-stat {
+    position: absolute;
+    /* правый край плашки уходит на 54px ПОД холодильник — она выглядывает из-за него */
+    right: calc(100% - 54px);
     display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+    padding: 15px 54px 15px 20px;
+    border-radius: 14px 0 0 14px;
+    background: var(--navy-soft);
+    border: 1px solid var(--glass-brd);
+    border-right: none;
+    box-shadow: -18px 18px 44px rgba(0, 0, 0, 0.45);
+    white-space: nowrap;
+}
+.main-stat b {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--blue-2);
+}
+.main-stat span {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.72);
+    margin-top: 6px;
+}
+/* Равномерно по всей высоте холодильника */
+.main-stat:nth-child(1) { top: 8%; }
+.main-stat:nth-child(2) { top: 44%; }
+.main-stat:nth-child(3) { top: 80%; }
+
+/* КНОПКА */
+.main-button {
+    border: none;
+    box-sizing: border-box;
+    /* пилюля по ширине надписи, с бликом при наведении */
+    border-radius: 999px;
+    background: linear-gradient(135deg, #4C86FF 0%, #1E5EFF 50%, #1446D6 100%);
+    color: #ffffff;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    padding: 0 48px;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     position: relative;
+<<<<<<< HEAD
     transition: 0.5s;
     z-index: 1;
     box-shadow: 0 4px 30px rgba(0, 102, 255, 0.3);
@@ -106,6 +191,29 @@
     font-weight: 500;
     letter-spacing: 1px;
     overflow: hidden;
+=======
+    overflow: hidden;
+    z-index: 1;
+    cursor: pointer;
+    /* одна мягкая тень вместо трёх слоёв */
+    box-shadow: 0 6px 18px rgba(30, 94, 255, 0.22);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+    max-width: 100%;
+    height: 74px;
+    font-size: 24px;
+}
+.main-button::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -60%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+    transform: skewX(-20deg);
+    transition: left 0.7s ease;
+    pointer-events: none;
+>>>>>>> f7a68854ec57a7c4b9cb1d2acf908957818b7d42
 }
 
 .main-button::before {
@@ -130,9 +238,18 @@
 }
 
 .main-button:hover {
+<<<<<<< HEAD
     background: linear-gradient(135deg, #6BB5FF, #0055E6);
     transform: translateY(-3px) scale(1.02);
     box-shadow: 0 8px 50px rgba(0, 102, 255, 0.5);
+=======
+    transform: translateY(-2px);
+    filter: brightness(1.06);
+    box-shadow: 0 8px 22px rgba(30, 94, 255, 0.3);
+}
+.main-button:hover::after {
+    left: 130%;
+>>>>>>> f7a68854ec57a7c4b9cb1d2acf908957818b7d42
 }
 
 .main-button:hover::before {
@@ -140,25 +257,38 @@
 }
 
 .main-button:active {
+<<<<<<< HEAD
     transform: scale(0.97);
     opacity: 0.8;
+=======
+    transform: translateY(0) scale(0.98);
+>>>>>>> f7a68854ec57a7c4b9cb1d2acf908957818b7d42
 }
 
 /* СНЕЖИНКА — белая, с анимацией */
 .snowflake {
     position: absolute;
     top: 700px;
+<<<<<<< HEAD
     right: 100px;
     filter: drop-shadow(0 0 30px rgba(74, 158, 255, 0.2));
+=======
+    right: var(--gutter);
+    filter: drop-shadow(0 0 30px rgba(30, 94, 255, 0.2));
+>>>>>>> f7a68854ec57a7c4b9cb1d2acf908957818b7d42
     animation: floatSnow 8s ease-in-out infinite;
     z-index: 1;
 }
 
+<<<<<<< HEAD
 /* КРУГИ — голубоватые (без изменения размера) */
+=======
+/* КРУГИ — голубоватые */
+>>>>>>> f7a68854ec57a7c4b9cb1d2acf908957818b7d42
 .circles {
     position: absolute;
     top: 150px;
-    right: 100px;
+    right: var(--gutter);
     z-index: 0;
     opacity: 0.6;
     animation: rotateCircles 7s linear infinite;
@@ -180,15 +310,19 @@
     100% { transform: rotate(360deg); }
 }
 
+<<<<<<< HEAD
 /* ===== ТВОЙ АДАПТИВ (БЕЗ ИЗМЕНЕНИЙ) ===== */
+=======
+/* ===== АДАПТИВ ===== */
+>>>>>>> f7a68854ec57a7c4b9cb1d2acf908957818b7d42
 @media (max-width: 1720px) {
     .main-conteiner {
-        padding: 90px 80px 0 80px;
+        padding-top: 90px;
         height: min(calc(100vh - 90px), 880px);
     }
     .main-header {
-        font-size: 100px;
-        line-height: 130px;
+        font-size: 64px;
+        line-height: 1.12;
     }
     .fridge-main {
         width: 330px;
@@ -197,13 +331,12 @@
 
 @media (max-width: 1530px) {
     .main-conteiner {
-        padding: 80px 60px 0 60px;
+        padding-top: 80px;
         height: min(calc(100vh - 80px), 850px);
         gap: 30px;
     }
     .main-header {
-        font-size: 80px;
-        line-height: 100px;
+        font-size: 56px;
         margin-left: 30px;
     }
     .fridge-main {
@@ -212,19 +345,11 @@
     .main-title {
         font-size: 22px;
         margin-left: 30px;
-        margin-top: 40px;
-    }
-    .main-description {
-        font-size: 15px;
-        margin-left: 30px;
-        margin-top: 40px;
+        margin-top: 28px;
     }
     .main-button {
-        width: 400px;
         height: 70px;
         font-size: 22px;
-        margin-left: 30px;
-        margin-top: 80px;
     }
     .snowflake {
         right: 150px;
@@ -235,13 +360,12 @@
 
 @media (max-width: 1260px) {
     .main-conteiner {
-        padding: 70px 50px 0 50px;
+        padding-top: 70px;
         height: min(calc(100vh - 70px), 700px);
         gap: 25px;
     }
     .main-header {
-        font-size: 65px;
-        line-height: 85px;
+        font-size: 48px;
         margin-left: 20px;
     }
     .fridge-main {
@@ -250,19 +374,11 @@
     .main-title {
         font-size: 20px;
         margin-left: 20px;
-        margin-top: 35px;
-    }
-    .main-description {
-        font-size: 14px;
-        margin-left: 20px;
-        margin-top: 35px;
+        margin-top: 24px;
     }
     .main-button {
-        width: 320px;
         height: 65px;
         font-size: 20px;
-        margin-left: 20px;
-        margin-top: 70px;
     }
     .snowflake {
         right: 100px;
@@ -273,13 +389,12 @@
 
 @media (max-width: 1024px) {
     .main-conteiner {
-        padding: 60px 40px 0 40px;
+        padding-top: 60px;
         height: min(calc(100vh - 60px), 600px);
         gap: 20px;
     }
     .main-header {
-        font-size: 50px;
-        line-height: 65px;
+        font-size: 40px;
         margin-left: 15px;
     }
     .fridge-main {
@@ -288,19 +403,11 @@
     .main-title {
         font-size: 18px;
         margin-left: 15px;
-        margin-top: 30px;
-    }
-    .main-description {
-        font-size: 13px;
-        margin-left: 15px;
-        margin-top: 30px;
+        margin-top: 22px;
     }
     .main-button {
-        width: 280px;
         height: 60px;
         font-size: 18px;
-        margin-left: 15px;
-        margin-top: 60px;
     }
     .snowflake {
         right: 80px;
@@ -313,13 +420,19 @@
     .main-conteiner {
         flex-direction: column;
         text-align: center;
-        padding: 50px 30px 0 30px;
-        height: min(calc(100vh - 50px), 780px);
+        padding-top: 50px;
+        height: min(calc(100vh - 50px), 820px);
         gap: 15px;
         justify-content: center;
+<<<<<<< HEAD
         background: 
             radial-gradient(ellipse at center, rgba(0, 120, 255, 0.08) 0%, transparent 70%),
             linear-gradient(180deg, #0A1628 0%, #14203A 100%);
+=======
+        background:
+            radial-gradient(ellipse at center, rgba(30, 94, 255, 0.08) 0%, transparent 70%),
+            linear-gradient(180deg, #0F2438 0%, #17334E 100%);
+>>>>>>> f7a68854ec57a7c4b9cb1d2acf908957818b7d42
     }
     .main-conteiner::before {
         display: none;
@@ -330,7 +443,7 @@
     }
     .main-header {
         font-size: 38px;
-        line-height: 48px;
+        line-height: 1.15;
         margin-left: 0;
         text-align: center;
     }
@@ -340,21 +453,8 @@
     .main-title {
         font-size: 16px;
         margin-left: 0;
-        margin-top: 25px;
+        margin-top: 22px;
         text-align: center;
-    }
-    .main-description {
-        font-size: 14px;
-        margin-left: 0;
-        margin-top: 25px;
-        text-align: center;
-    }
-    .main-button {
-        width: 100%;
-        max-width: 280px;
-        height: 55px;
-        font-size: 18px;
-        margin: 40px auto 0 auto;
     }
     .snowflake {
         right: 80px;
@@ -365,8 +465,8 @@
 
 @media (max-width: 600px) {
     .main-conteiner {
-        padding: 40px 20px 0 20px;
-        height: min(calc(100vh - 40px), 700px);
+        padding-top: 40px;
+        height: min(calc(100vh - 40px), 740px);
         gap: 10px;
     }
     .fridge-main {
@@ -374,12 +474,12 @@
     }
     .main-header {
         font-size: 30px;
-        line-height: 38px;
     }
     .main-title {
         font-size: 15px;
-        margin-top: 20px;
+        margin-top: 18px;
     }
+<<<<<<< HEAD
     .main-description {
         font-size: 13px;
         margin-top: 20px;
@@ -398,12 +498,15 @@
 }
 
 @media (max-width: 570px) {
+=======
+>>>>>>> f7a68854ec57a7c4b9cb1d2acf908957818b7d42
     .snowflake {
         right: 60px;
         width: 60px;
         top: 600px;
     }
 }
+<<<<<<< HEAD
 @media (max-width: 570px) {
     .snowflake {
         right: 40px;
@@ -411,33 +514,23 @@
         top: 600px;
     }
 }
+=======
+>>>>>>> f7a68854ec57a7c4b9cb1d2acf908957818b7d42
 
 @media (max-width: 480px) {
     .main-conteiner {
-        padding: 30px 15px 0 15px;
-        height: min(calc(100vh - 30px), 600px);
+        padding-top: 30px;
+        height: min(calc(100vh - 30px), 640px);
     }
     .fridge-main {
         width: 100px;
     }
     .main-header {
         font-size: 24px;
-        line-height: 30px;
     }
     .main-title {
         font-size: 14px;
         margin-top: 15px;
-    }
-    .main-description {
-        font-size: 12px;
-        margin-top: 15px;
-    }
-    .main-button {
-        max-width: 200px;
-        height: 44px;
-        font-size: 15px;
-        margin-top: 25px;
-        border-width: 2px;
     }
     .snowflake {
         right: 40px;
@@ -448,31 +541,18 @@
 
 @media (max-width: 400px) {
     .main-conteiner {
-        padding: 20px 10px 0 10px;
-        height: min(calc(100vh - 20px), 550px);
+        padding-top: 20px;
+        height: min(calc(100vh - 20px), 600px);
     }
     .fridge-main {
         width: 80px;
     }
     .main-header {
         font-size: 20px;
-        line-height: 26px;
     }
     .main-title {
         font-size: 12px;
         margin-top: 12px;
-    }
-    .main-description {
-        font-size: 11px;
-        margin-top: 12px;
-    }
-    .main-button {
-        max-width: 160px;
-        height: 38px;
-        font-size: 13px;
-        margin-top: 20px;
-        border-width: 2px;
-        border-radius: 8px;
     }
     .snowflake {
         right: 40px;
@@ -484,7 +564,7 @@
 @media (max-height: 500px) and (orientation: landscape) {
     .main-conteiner {
         height: 100vh;
-        padding: 20px 30px 0 30px;
+        padding-top: 20px;
         flex-direction: row;
         gap: 20px;
     }
@@ -493,20 +573,248 @@
     }
     .main-header {
         font-size: 28px;
-        line-height: 35px;
+        line-height: 1.15;
     }
     .main-title {
         font-size: 13px;
         margin-top: 10px;
     }
-    .main-description {
-        font-size: 11px;
-        margin-top: 10px;
+    .main-eyebrow,
+    .main-stats {
+        display: none;
+    }
+    .main-actions {
+        margin-left: 0;
+        margin-top: 16px;
+    }
+}
+
+/* ===== Выравнивание eyebrow / кнопки и масштаб плашек ===== */
+/* Холодильник и текст — правее, слева освобождаем место под плашки */
+@media (min-width: 1025px) {
+    .main-conteiner {
+        box-sizing: border-box;
+        height: auto;
+        min-height: 100vh;
+        /* +124px — видимая часть плашек .main-stat (их ширина минус скрытая
+           под корпусом часть). За счёт этого левый край плашек попадает
+           ровно на общую линию контента остальных секций. */
+        padding-left: calc(var(--gutter) + 124px);
+    }
+}
+
+@media (max-width: 1530px) {
+    .main-eyebrow,
+    .main-actions { margin-left: 30px; }
+    .main-stat { padding: 13px 50px 13px 17px; }
+    .main-stat b { font-size: 22px; }
+    .main-stat span { font-size: 11px; }
+    .main-stat { right: calc(100% - 50px); }
+}
+@media (max-width: 1260px) {
+    .main-eyebrow,
+    .main-actions { margin-left: 20px; }
+}
+@media (max-width: 1024px) {
+    .main-eyebrow,
+    .main-actions { margin-left: 15px; }
+    .main-eyebrow { font-size: 13px; letter-spacing: 1px; }
+    /* Слева от холодильника уже нет места для аккуратного «выглядывания» */
+    .main-stats { display: none; }
+}
+@media (max-width: 768px) {
+    .main-eyebrow {
+        display: inline-flex;
+        margin: 0 auto;
+        font-size: 12px;
+        letter-spacing: 1px;
+        padding: 7px 14px;
+    }
+    .main-actions {
+        margin: 20px auto 0 auto;
+        display: flex;
+        justify-content: center;
     }
     .main-button {
-        max-width: 180px;
-        height: 40px;
-        font-size: 14px;
-        margin-top: 20px;
+        max-width: 280px;
     }
+    /* На узких экранах плашки прячем — герой остаётся чистым */
+    .main-stats {
+        display: none;
+    }
+}
+@media (max-width: 600px) {
+    .main-actions { margin-top: 14px; }
+    .main-button { max-width: 240px; }
+}
+
+/* ===== 3D-ХОЛОДИЛЬНИК (canvas вместо fridge.svg) ===== */
+/* --fw = «ширина холодильника», аналог прежней width у fridge.svg.
+   Canvas шире неё, чтобы хватало места на распахнутую дверцу;
+   симметричные отрицательные поля оставляют ширину .hero-fridge равной --fw,
+   поэтому плашки .main-stat выглядывают из-за холодильника ровно как раньше.
+   margin-bottom поднимает холодильник вместе с плашками: у контейнера padding-top
+   равен высоте шапки, а снизу 0, поэтому при align-items: center блок визуально провисал.
+   Отступ снизу, а не top: при нехватке высоты окна центрирование само себя отключает
+   и холодильник остаётся под шапкой, а не заезжает под неё. */
+.main-conteiner {
+    --fw: 414px;
+}
+.hero-fridge {
+    margin-bottom: calc(var(--fw) * 0.24);
+}
+
+canvas.fridge-main {
+    display: block;
+    position: relative;
+    z-index: 1;
+    /* canvas шире --fw, чтобы распахнутая дверь не упиралась в край.
+       Поля асимметричны: кадр в fridge3d.js сдвинут влево (camX), и canvas
+       сдвинут туда же, чтобы холодильник остался по центру .hero-fridge.
+       Сумма полей = -0.8 * --fw, поэтому ширина .hero-fridge по-прежнему = --fw. */
+    width: calc(var(--fw) * 1.8);
+    height: calc(var(--fw) * 1.95);
+    margin-left: calc(var(--fw) * -0.525);
+    margin-right: calc(var(--fw) * -0.275);
+    filter: drop-shadow(0 0 40px rgba(30, 94, 255, 0.25));
+    cursor: grab;
+    touch-action: pan-y;
+}
+
+
+/* Плашки должны всегда уходить правым краем за корпус.
+   Холодильник крутится (автовращение + слежение за курсором), и в анфас его силуэт самый узкий —
+   левый край корпуса никогда не заходит правее 0.17 * --fw от края .hero-fridge.
+   Берём 0.2 * --fw с запасом; padding-right растёт на столько же, поэтому левый
+   край плашки остаётся на месте. top — в пределах высоты корпуса (12%–91% canvas). */
+.main-stat {
+    box-sizing: border-box;
+    right: calc(100% - var(--fw) * 0.2);
+    padding-right: calc(var(--fw) * 0.2);
+    /* одинаковая ширина у всех трёх: скрытая часть (0.2 * --fw) + видимая (124px
+       под самую длинную подпись «диагностика»); без этого ширина плыла по контенту */
+    width: calc(var(--fw) * 0.2 + 124px);
+}
+.main-stat:nth-child(1) { top: 15%; }
+.main-stat:nth-child(2) { top: 44%; }
+.main-stat:nth-child(3) { top: 71%; }
+
+/* Плашки и отступ под них (+124px слева) — только там, где для них есть место.
+   Ниже 1360px текстовой колонке уже не хватает ширины на неразрывное
+   «ХОЛОДИЛЬНИКОВ», и заголовок вылезал за правый отступ. */
+@media (max-width: 1360px) {
+    .main-stats { display: none; }
+    .main-conteiner { padding-left: var(--gutter); }
+}
+
+@media (max-width: 1720px) { .main-conteiner { --fw: 372px; } }
+@media (max-width: 1530px) { .main-conteiner { --fw: 314px; } }
+@media (max-width: 1260px) { .main-conteiner { --fw: 257px; } }
+@media (max-width: 1024px) { .main-conteiner { --fw: 209px; } .hero-fridge { margin-bottom: 0; } }
+@media (max-width: 768px) {
+    .main-conteiner { --fw: 168px; }
+}
+@media (max-width: 600px) { .main-conteiner { --fw: 134px; } }
+@media (max-width: 480px) { .main-conteiner { --fw: 112px; } }
+@media (max-width: 400px) { .main-conteiner { --fw: 91px; } }
+@media (max-height: 500px) and (orientation: landscape) {
+    .main-conteiner { --fw: 84px; }
+}
+
+/* ===== ТЕКСТОВАЯ КОЛОНКА ГЕРОЯ: распределение по высоте экрана ===== */
+@media (min-width: 1025px) {
+    /* поднимается на ту же величину, что и холодильник, — центры колонок совпадают,
+       и сверху под шапкой не остаётся лишней пустоты */
+    .hero-fridge + div {
+        margin-bottom: calc(var(--fw) * 0.24);
+    }
+    /* промежутки растут вместе с высотой окна, заполняя экран равномернее;
+       нижние границы — прежние значения, так что на невысоких экранах ничего не сжимается */
+    .main-header      { margin-top: clamp(24px, 4.2vh, 52px); }
+    .main-title       { margin-top: clamp(24px, 3.8vh, 46px); }
+    .main-actions     { margin-top: clamp(36px, 5.8vh, 70px); }
+}
+
+/* ===== ГЕРОЙ: вместо двух абзацев — короткий список и подпись у кнопки ===== */
+.main-points {
+    list-style: none;
+    display: inline-flex;
+    flex-direction: column;
+    gap: clamp(8px, 1.4vh, 14px);
+    text-align: left;
+}
+.main-points li {
+    position: relative;
+    padding-left: 36px;
+    font-size: clamp(16px, 1.25vw, 20px);
+    line-height: 1.35;
+    color: var(--text);
+}
+/* галочка в круглой стеклянной плашке — в тон значкам в «Наших преимуществах» */
+.main-points li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.675em;
+    width: 24px;
+    height: 24px;
+    transform: translateY(-50%);
+    border-radius: 50%;
+    background: rgba(91, 147, 255, 0.16) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238FB4FF' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center / 14px no-repeat;
+    box-shadow: inset 0 0 0 1px rgba(91, 147, 255, 0.4);
+}
+
+/* пояснение к пункту — второй строкой, мельче и приглушённо */
+.main-points li span {
+    display: block;
+    max-width: 32em;
+    margin-top: 5px;
+    /* крупнее и светлее: читается как полноценное уточнение, а не мелкая сноска */
+    font-size: 0.9em;
+    line-height: 1.45;
+    color: #C3D6F7;
+}
+
+/* кнопка */
+.main-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px 24px;
+}
+
+
+@media (max-width: 768px) and (min-height: 501px) {
+    /* список и подпись выше двух прежних абзацев: при фиксированной высоте
+       блок центрировался с переполнением и холодильник уезжал под шапку.
+       Шапка на телефоне в две строки и высотой 102px — отступ сверху под неё */
+    .main-conteiner {
+        height: auto;
+        padding-top: 118px;
+        padding-bottom: 48px;
+    }
+    .main-points li {
+        font-size: 15px;
+        padding-left: 32px;
+    }
+    .main-actions {
+        flex-direction: column;
+    }
+}
+
+/* Снежинка привязана к низу блока, а не к пиксельному top по брейкпоинтам */
+@media (min-width: 1025px) {
+    .snowflake {
+        top: auto;
+        bottom: clamp(40px, 8vh, 90px);
+    }
+}
+/* Снежинка декоративная: где под строкой «кнопка + подпись» для неё нет места,
+   её не показываем. Замер: на 1440 при высоте окна 760px она наезжала на подпись,
+   при 820px зазор всего 5px; на телефоне ложилась поверх списка. */
+@media (min-width: 1025px) and (max-height: 860px) {
+    .snowflake { display: none; }
+}
+@media (max-width: 768px) {
+    .snowflake { display: none; }
 }

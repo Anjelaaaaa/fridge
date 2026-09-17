@@ -1,22 +1,66 @@
 @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@200;300;400;500;600;700;800;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Tourney:wght@200;300;400;500;600;700;800;900&display=swap');
+
+/* ===== DESIGN TOKENS — глубокий синий + тёплый крем + электрик ===== */
+:root {
+    --navy: #0F2438;
+    --navy-deep: #091726;
+    --navy-soft: #17334E;
+    --blue: #1E5EFF;
+    --blue-2: #5B93FF;
+
+    --bg-0: #091726;
+    --bg-1: #0F2438;
+    --bg-2: #17334E;
+    --accent: #1E5EFF;
+    --accent-2: #5B93FF;
+    --accent-grad: linear-gradient(135deg, #1E5EFF, #5B93FF);
+    --text: #ffffff;
+    --text-dim: rgba(255, 255, 255, 0.72);
+    --text-mute: rgba(255, 255, 255, 0.5);
+    --glass: rgba(255, 255, 255, 0.05);
+    --glass-strong: rgba(255, 255, 255, 0.08);
+    --glass-brd: rgba(91, 147, 255, 0.28);
+    --glow: rgba(30, 94, 255, 0.3);
+
+    /* ЕДИНЫЕ БОКОВЫЕ ОТСТУПЫ.
+       --pad — минимальный отступ от края экрана, --maxw — предел ширины контента.
+       --gutter даёт то же самое одним значением: пока экран уже 1720px это --pad,
+       дальше он растёт так, чтобы контент остался 1720px по центру.
+       Секции при этом во всю ширину — фон без чёрных полос по краям. */
+    --pad: clamp(28px, 9vw, 180px);
+    --maxw: 1720px;
+    --gutter: max(var(--pad), calc((100% - 1720px) / 2));
+
+    /* Тёплая кремовая палитра (вместо морозной) */
+    --light-ink: #0F2438;
+    --light-ink-dim: #5A6E85;
+    --light-card: #ffffff;
+    --light-card-brd: rgba(15, 36, 56, 0.14);
+    --light-shadow: 0 22px 46px rgba(9, 23, 38, 0.13);
+    --light-shadow-hover: 0 32px 64px rgba(9, 23, 38, 0.2);
+}
+
 body {
+    /* фон страницы — иначе в скруглённых верхних углах подвала
+       просвечивал белый холст браузера */
+    background-color: var(--bg-0);
     font-family: 'Unbounded', sans-serif;
     overflow-x: hidden;
     caret-color: transparent;
 }
 main {
-    background-color: #1F1F1F;
+    background-color: var(--bg-0);
 }
 * {
     margin: 0;
     padding: 0;
 }
 footer {
-    background-color:#D9D7D7;
+    background-color: var(--bg-0);
 }
 header {
-    background-color:rgba(163, 163, 163, 0.247);
+    background-color: rgba(163, 163, 163, 0.247);
     padding: 0 100px 0 100px;
     height: 100px;
     font-size: 16px;
@@ -57,6 +101,25 @@ a[href^="tel"] {
     display: inline-block;
 }
 
+/* Надпись-ярлык над заголовком секции */
+.eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--blue);
+}
+.eyebrow::before {
+    content: '';
+    width: 34px;
+    height: 2px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+}
+
 /* Модальное окно */
 
 .modal {
@@ -76,13 +139,14 @@ a[href^="tel"] {
     display: flex;
 }
 .modal-content {
-    background: #1F1F1F;
-    border: 3px solid #D9D7D7;
+    background: linear-gradient(160deg, var(--bg-1), var(--bg-0));
+    border: 1px solid var(--glass-brd);
     border-radius: 30px;
     padding: 60px 80px;
     text-align: center;
     position: relative;
     animation: modalFade 0.3s ease;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 0 60px var(--glow);
 }
 @keyframes modalFade {
     from {
@@ -109,10 +173,13 @@ a[href^="tel"] {
 }
 .modal-number {
     font-size: 50px;
-    color: #ffffff;
     font-weight: bold;
     margin: 20px 0;
     letter-spacing: 2px;
+    background: var(--accent-grad);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 .modal-text {
     font-size: 20px;

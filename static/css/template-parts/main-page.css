@@ -76,46 +76,19 @@
     background-clip: text;
 }
 
-<<<<<<< HEAD
-.main-header::after {
-    content: '';
-    display: block;
+
+.main-title {
+    margin-left: 40px;
+    color: #ffffff;
     font-size: 24px;
-<<<<<<< HEAD
-    margin-top: 50px;
-=======
     line-height: 1.4;
     margin-top: 28px;
->>>>>>> f7a68854ec57a7c4b9cb1d2acf908957818b7d42
     opacity: 0.95;
     position: relative;
     z-index: 1;
     max-width: 1200px;
 }
 
-<<<<<<< HEAD
-.main-description {
-    margin-left: 40px;
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 16px;
-    margin-top: 50px;
-    position: relative;
-    z-index: 1;
-    max-width: 800px;
-}
-
-/* КНОПКА — СИНЯЯ (без белой обводки) */
-.main-button {
-    border: none;
-    background: linear-gradient(135deg, #4A9EFF, #0066FF);
-    width: 547px;
-    height: 80px;
-    font-size: 24px;
-    margin-left: 40px;
-    color: #ffffff;
-    border-radius: 12px;
-    margin-top: 100px;
-=======
 
 /* Кнопка */
 .main-actions {
@@ -183,15 +156,6 @@
     align-items: center;
     justify-content: center;
     position: relative;
-<<<<<<< HEAD
-    transition: 0.5s;
-    z-index: 1;
-    box-shadow: 0 4px 30px rgba(0, 102, 255, 0.3);
-    cursor: pointer;
-    font-weight: 500;
-    letter-spacing: 1px;
-    overflow: hidden;
-=======
     overflow: hidden;
     z-index: 1;
     cursor: pointer;
@@ -213,78 +177,30 @@
     transform: skewX(-20deg);
     transition: left 0.7s ease;
     pointer-events: none;
->>>>>>> f7a68854ec57a7c4b9cb1d2acf908957818b7d42
 }
-
-.main-button::before {
-    content: '';
-    position: absolute;
-    inset: -2px;
-    background: linear-gradient(135deg, #4A9EFF, #00D4FF, #4A9EFF);
-    border-radius: 14px;
-    z-index: -1;
-    opacity: 0;
-    transition: 0.5s;
-    filter: blur(8px);
-}
-
-.main-button::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, #4A9EFF, #0066FF);
-    border-radius: 12px;
-    z-index: -1;
-}
-
 .main-button:hover {
-<<<<<<< HEAD
-    background: linear-gradient(135deg, #6BB5FF, #0055E6);
-    transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 8px 50px rgba(0, 102, 255, 0.5);
-=======
     transform: translateY(-2px);
     filter: brightness(1.06);
     box-shadow: 0 8px 22px rgba(30, 94, 255, 0.3);
 }
 .main-button:hover::after {
     left: 130%;
->>>>>>> f7a68854ec57a7c4b9cb1d2acf908957818b7d42
 }
-
-.main-button:hover::before {
-    opacity: 1;
-}
-
 .main-button:active {
-<<<<<<< HEAD
-    transform: scale(0.97);
-    opacity: 0.8;
-=======
     transform: translateY(0) scale(0.98);
->>>>>>> f7a68854ec57a7c4b9cb1d2acf908957818b7d42
 }
 
 /* СНЕЖИНКА — белая, с анимацией */
 .snowflake {
     position: absolute;
     top: 700px;
-<<<<<<< HEAD
-    right: 100px;
-    filter: drop-shadow(0 0 30px rgba(74, 158, 255, 0.2));
-=======
     right: var(--gutter);
     filter: drop-shadow(0 0 30px rgba(30, 94, 255, 0.2));
->>>>>>> f7a68854ec57a7c4b9cb1d2acf908957818b7d42
     animation: floatSnow 8s ease-in-out infinite;
     z-index: 1;
 }
 
-<<<<<<< HEAD
-/* КРУГИ — голубоватые (без изменения размера) */
-=======
 /* КРУГИ — голубоватые */
->>>>>>> f7a68854ec57a7c4b9cb1d2acf908957818b7d42
 .circles {
     position: absolute;
     top: 150px;
@@ -310,11 +226,7 @@
     100% { transform: rotate(360deg); }
 }
 
-<<<<<<< HEAD
-/* ===== ТВОЙ АДАПТИВ (БЕЗ ИЗМЕНЕНИЙ) ===== */
-=======
 /* ===== АДАПТИВ ===== */
->>>>>>> f7a68854ec57a7c4b9cb1d2acf908957818b7d42
 @media (max-width: 1720px) {
     .main-conteiner {
         padding-top: 90px;
@@ -424,15 +336,9 @@
         height: min(calc(100vh - 50px), 820px);
         gap: 15px;
         justify-content: center;
-<<<<<<< HEAD
-        background: 
-            radial-gradient(ellipse at center, rgba(0, 120, 255, 0.08) 0%, transparent 70%),
-            linear-gradient(180deg, #0A1628 0%, #14203A 100%);
-=======
         background:
             radial-gradient(ellipse at center, rgba(30, 94, 255, 0.08) 0%, transparent 70%),
             linear-gradient(180deg, #0F2438 0%, #17334E 100%);
->>>>>>> f7a68854ec57a7c4b9cb1d2acf908957818b7d42
     }
     .main-conteiner::before {
         display: none;
@@ -446,9 +352,6 @@
         line-height: 1.15;
         margin-left: 0;
         text-align: center;
-    }
-    .main-header::after {
-        margin: 10px auto 0 auto;
     }
     .main-title {
         font-size: 16px;
@@ -479,43 +382,12 @@
         font-size: 15px;
         margin-top: 18px;
     }
-<<<<<<< HEAD
-    .main-description {
-        font-size: 13px;
-        margin-top: 20px;
-    }
-    .main-button {
-        max-width: 240px;
-        height: 50px;
-        font-size: 16px;
-        margin-top: 30px;
-    }
-    .snowflake {
-        right: 80px;
-        width: 60px;
-        top: 600px;
-    }
-}
-
-@media (max-width: 570px) {
-=======
->>>>>>> f7a68854ec57a7c4b9cb1d2acf908957818b7d42
     .snowflake {
         right: 60px;
         width: 60px;
         top: 600px;
     }
 }
-<<<<<<< HEAD
-@media (max-width: 570px) {
-    .snowflake {
-        right: 40px;
-        width: 60px;
-        top: 600px;
-    }
-}
-=======
->>>>>>> f7a68854ec57a7c4b9cb1d2acf908957818b7d42
 
 @media (max-width: 480px) {
     .main-conteiner {

@@ -1,5 +1,5 @@
-/* Подвал — полоса во всю ширину экрана: подложка и верхняя линия лежат
-   на самом footer, а содержимое внутри держится в общей колонке контента. */
+/* Подвал — полоса во всю ширину экрана: подложка, верхняя линия и скругление
+   лежат на самом footer, а содержимое держится в общей колонке контента. */
 footer {
     padding: 0 var(--gutter);
     background:
@@ -7,327 +7,107 @@ footer {
         var(--bg-0);
     -webkit-backdrop-filter: blur(14px);
     backdrop-filter: blur(14px);
-    border-top: 1px solid var(--glass-brd);
-    /* полоса во всю ширину, но верхние углы скруглены — как было у карточки */
+    border-top: 1px solid var(--card-brd);
     border-radius: 20px 20px 0 0;
+    /* подвал заходит на «Контакты» на высоту скругления: в уголках виден
+       фон секции над ним, а не тёмный фон страницы (были чёрные треугольники) */
+    position: relative;
+    z-index: 1;
+    margin-top: -20px;
 }
 
+/* та же раскладка, что и была (адрес и копирайт слева, круг и номер справа),
+   только всё примерно вдвое мельче */
 .footer-conteiner {
     display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    gap: 24px;
     max-width: var(--maxw);
-    padding: 50px 0 0;
-    height: 250px;
     margin: auto;
+    padding: 28px 0;
+}
+.footer-conteiner > div:first-child {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 18px;
 }
 .footer-text {
     color: var(--text);
-    font-size: 24px;
-    line-height: 30px;
-    margin-top: 10px;
+    font-size: clamp(14px, 1.1vw, 16px);
+    line-height: 1.4;
     font-style: normal;
 }
 .footer-rules {
-    margin-top: 130px;
     color: var(--text-mute);
-    font-size: 24px;
-    line-height: 30px;
+    font-size: clamp(12px, 0.95vw, 14px);
+    line-height: 1.4;
+}
+.footer-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
 }
 .circle {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-left: auto;
-    width: 107px;
-    height: 107px;
+    width: 52px;
+    height: 52px;
     border-radius: 50%;
     background: var(--accent-grad);
-    box-shadow: 0 0 40px var(--glow);
+    box-shadow: 0 0 22px var(--glow);
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.circle:hover {
+    transform: scale(1.08);
+    box-shadow: 0 0 30px rgba(30, 94, 255, 0.5);
+}
+.circle:active {
+    transform: scale(0.96);
 }
 .circle img {
+    width: 22px;
     filter: brightness(0) invert(1);
 }
-.footer-right {
-    margin-left: auto;
-}
 .number {
-    margin-top: 30px;
-    font-size: 50px;
+    font-size: clamp(20px, 1.8vw, 28px);
     font-weight: bold;
+    line-height: 1.1;
+    white-space: nowrap;
     background: var(--accent-grad);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
-@media (max-width: 1720px) {
-    .footer-conteiner {
-        padding: 45px 0 0;
-        height: 240px;
-    }
-    .footer-text {
-        font-size: 22px;
-        line-height: 28px;
-    }
-    .footer-rules {
-        font-size: 22px;
-        line-height: 28px;
-        margin-top: 110px;
-    }
-    .circle {
-        width: 95px;
-        height: 95px;
-    }
-    .circle img {
-        width: 40px;
-    }
-    .number {
-        font-size: 44px;
-        margin-top: 25px;
-    }
-}
-@media (max-width: 1530px) {
-    .footer-conteiner {
-        padding: 40px 0 0;
-        height: 200px;
-    }
-    .footer-text {
-        font-size: 20px;
-        line-height: 26px;
-    }
-    .footer-rules {
-        font-size: 20px;
-        line-height: 26px;
-        margin-top: 90px;
-    }
-    .circle {
-        width: 85px;
-        height: 85px;
-    }
-    .circle img {
-        width: 35px;
-    }
-    .number {
-        font-size: 38px;
-        margin-top: 22px;
-    }
-}
-@media (max-width: 1260px) {
-    .footer-conteiner {
-        padding: 35px 0 0;
-        height: 180px;
-        gap: 30px;
-    }
-    .footer-text {
-        font-size: 18px;
-        line-height: 24px;
-    }
-    .footer-rules {
-        font-size: 18px;
-        line-height: 24px;
-        margin-top: 70px;
-    }
-    .circle {
-        width: 75px;
-        height: 75px;
-    }
-    .circle img {
-        width: 30px;
-    }
-    .number {
-        font-size: 32px;
-        margin-top: 20px;
-    }
-}
-@media (max-width: 1024px) {
+
+@media (max-width: 768px) {
     footer {
         border-radius: 15px 15px 0 0;
+        margin-top: -15px;
     }
-    .footer-conteiner {
-        padding: 30px 0 0;
-        height: 140px;
-        gap: 20px;
-    }
-    .footer-text {
-        font-size: 16px;
-        line-height: 22px;
-        margin-top: 5px;
-    }
-    .footer-rules {
-        font-size: 16px;
-        line-height: 22px;
-        margin-top: 50px;
-    }
-    .circle {
-        width: 65px;
-        height: 65px;
-    }
-    .circle img {
-        width: 26px;
-    }
-    .number {
-        font-size: 28px;
-        margin-top: 15px;
-    }
-}
-@media (max-width: 768px) {
     .footer-conteiner {
         flex-direction: column;
         align-items: center;
         text-align: center;
-        padding: 25px 0 20px;
-        height: auto;
-        gap: 15px;
+        gap: 14px;
+        padding: 24px 0;
     }
-    .footer-text {
-        font-size: 16px;
-        line-height: 22px;
-        margin-top: 0;
-    }
-    .footer-rules {
-        font-size: 14px;
-        line-height: 20px;
-        margin-top: 10px;
+    .footer-conteiner > div:first-child {
+        gap: 6px;
     }
     .footer-right {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        margin-left: 0;
-    }
-    .circle {
-        width: 60px;
-        height: 60px;
-        margin-left: 0;
-    }
-    .circle img {
-        width: 24px;
-    }
-    .number {
-        font-size: 22px;
-        margin-top: 0;
-    }
-}
-@media (max-width: 600px) {
-    .footer-conteiner {
-        padding: 20px 0 15px;
-        gap: 12px;
-    }
-    .footer-text {
-        font-size: 14px;
-        line-height: 20px;
-    }
-    .footer-rules {
-        font-size: 13px;
-        line-height: 18px;
-        margin-top: 8px;
-    }
-    .footer-right {
-        gap: 12px;
-    }
-    .circle {
-        width: 50px;
-        height: 50px;
-    }
-    .circle img {
-        width: 20px;
-    }
-    .number {
-        font-size: 18px;
-    }
-}
-@media (max-width: 480px) {
-    footer {
-        border-radius: 12px 12px 0 0;
-    }
-    .footer-conteiner {
-        padding: 15px 0 12px;
-        gap: 10px;
-    }
-    .footer-text {
-        font-size: 13px;
-        line-height: 18px;
-    }
-    .footer-rules {
-        font-size: 12px;
-        line-height: 16px;
-        margin-top: 5px;
-    }
-    .footer-right {
-        gap: 10px;
-    }
-    .circle {
-        width: 44px;
-        height: 44px;
-    }
-    .circle img {
-        width: 18px;
-    }
-    .number {
-        font-size: 16px;
-    }
-}
-@media (max-width: 400px) {
-    footer {
-        border-radius: 10px 10px 0 0;
-    }
-    .footer-conteiner {
-        padding: 12px 0 10px;
-        gap: 8px;
-    }
-    .footer-text {
-        font-size: 12px;
-        line-height: 16px;
-    }
-    .footer-rules {
-        font-size: 11px;
-        line-height: 14px;
-        margin-top: 4px;
-    }
-    .footer-right {
-        gap: 8px;
-    }
-    .circle {
-        width: 38px;
-        height: 38px;
-    }
-    .circle img {
-        width: 15px;
-    }
-    .number {
-        font-size: 14px;
-    }
-}
-@media (max-height: 500px) and (orientation: landscape) {
-    .footer-conteiner {
         flex-direction: row;
-        padding: 15px 0;
-        height: auto;
-        gap: 20px;
-        text-align: left;
-    }
-    .footer-text {
-        font-size: 14px;
-        line-height: 18px;
-        margin-top: 0;
-    }
-    .footer-rules {
-        font-size: 13px;
-        line-height: 18px;
-        margin-top: 5px;
-    }
-    .footer-right {
-        margin-left: auto;
-        gap: 15px;
+        align-items: center;
     }
     .circle {
-        width: 50px;
-        height: 50px;
-        margin-left: 0;
+        width: 40px;
+        height: 40px;
     }
     .circle img {
-        width: 20px;
-    }
-    .number {
-        font-size: 18px;
-        margin-top: 0;
+        width: 17px;
     }
 }

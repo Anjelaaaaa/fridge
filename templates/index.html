@@ -3,56 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Профессиональный ремонт холодильников в Новосибирске. Бесплатная диагностика, гарантия 1 год. Выезд мастера.">
-    <meta name="keywords" content="ремонт холодильников Новосибирск, ремонт холодильников, срочный ремонт холодильников, выезд мастера по ремонту холодильников, диагностика холодильников, ремонт холодильников на дому, замена компрессора холодильника, заправка фреоном холодильника, ремонт холодильников недорого, ремонт холодильников с гарантией, мастер по ремонту холодильников, ремонт холодильников цена, холодильник ремонт, вызвать мастера по холодильникам, ремонт холодильников в Новосибирске, утилизация холодильников Новосибирск, скупка холодильников Новосибирск, вывоз холодильников Новосибирск, ремонт бытовой техники Новосибирск, сервисный центр холодильников Новосибирск">
-    <title>Ремонт холодильников в Новосибирске | Профессиональный ремонт</title>
+    <!-- заголовок и описание в выдаче: главный запрос + город в начале, выгоды и телефон -->
+    <title>Ремонт холодильников в Новосибирске на дому — FRIDGE</title>
+    <meta name="description" content="Ремонт холодильников на дому в Новосибирске: выезд мастера по всем районам, бесплатная диагностика при ремонте, гарантия 1 год. Звоните: 8 952 936 82 20.">
+
+    <!-- шрифты со своего сервера: браузер посетителя не обращается к Google (152-ФЗ), грузится быстрее.
+         Кириллицу основного шрифта подгружаем заранее — она нужна для первого экрана -->
+    <link rel="preload" href="{{ url_for('static', filename='fonts/unbounded-cyrillic-c86556.woff2') }}" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <script src="/static/js/reveal.js"></script>
+    <script src="/static/js/header.js" defer></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/template-parts/main-page.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/template-parts/about.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/template-parts/services.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/template-parts/disposal.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/template-parts/contact.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
     <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon/favicon.ico') }}" type="image/x-icon">
-    <link rel="icon" href="{{ url_for('static', filename='images/favicon/favicon-16x16.png') }}">
-    <link rel="icon" href="{{ url_for('static', filename='images/favicon/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/favicon/favicon-16x16.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon/favicon-32x32.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/favicon/apple-touch-icon.png') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='images/favicon/site.webmanifest') }}">
 
-    <link rel="canonical" href="{{ request.base_url }}">
-    <meta name="robots" content="index, follow">
-    <meta name="theme-color" content="#0A1628">
-    <meta name="author" content="FRIDGE — сервис ремонта холодильников">
+    <!-- один адрес страницы для поисковиков (без /index и параметров) -->
+    <link rel="canonical" href="{{ url_for('index', _external=True) }}">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <meta name="theme-color" content="#0C1E3C">
     <meta name="geo.region" content="RU-NVS">
     <meta name="geo.placename" content="Новосибирск">
+    <!-- Сюда вставить коды подтверждения из Яндекс.Вебмастера и Google Search Console:
+    <meta name="yandex-verification" content="...">
+    <meta name="google-site-verification" content="..."> -->
 
-    <!-- Open Graph -->
+    <!-- превью ссылки в мессенджерах и соцсетях (SVG там не показывается — берём PNG) -->
     <meta property="og:type" content="website">
     <meta property="og:locale" content="ru_RU">
     <meta property="og:site_name" content="FRIDGE — ремонт холодильников">
-    <meta property="og:title" content="Ремонт холодильников в Новосибирске | Профессиональный ремонт">
-    <meta property="og:description" content="Профессиональный ремонт холодильников в Новосибирске. Бесплатная диагностика, гарантия 1 год. Выезд мастера на дом.">
-    <meta property="og:url" content="{{ request.base_url }}">
-    <meta property="og:image" content="{{ url_for('static', filename='images/main/fridge.svg', _external=True) }}">
-    <meta name="twitter:card" content="summary_large_image">
+    <meta property="og:title" content="Ремонт холодильников в Новосибирске на дому — FRIDGE">
+    <meta property="og:description" content="Выезд мастера по всем районам Новосибирска, бесплатная диагностика при ремонте, гарантия 1 год. 8 952 936 82 20">
+    <meta property="og:url" content="{{ url_for('index', _external=True) }}">
+    <meta property="og:image" content="{{ url_for('static', filename='images/favicon/android-chrome-512x512.png', _external=True) }}">
+    <meta property="og:image:width" content="512">
+    <meta property="og:image:height" content="512">
+    <meta property="og:image:alt" content="FRIDGE — ремонт холодильников в Новосибирске">
+    <meta name="twitter:card" content="summary">
 
+    <!-- данные об организации для Яндекса и Google: адрес, телефон, услуги -->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
         "@type": "LocalBusiness",
+        "@id": "{{ url_for('index', _external=True) }}#business",
         "name": "FRIDGE — ремонт холодильников",
-        "description": "Профессиональный ремонт холодильников в Новосибирске. Бесплатная диагностика при ремонте, гарантия 1 год, выезд мастера на дом.",
-        "url": "{{ request.base_url }}",
-        "telephone": "+7 952 936 82 20",
-        "image": "{{ url_for('static', filename='images/main/fridge.svg', _external=True) }}",
+        "alternateName": "FRIDGE",
+        "description": "Ремонт холодильников на дому в Новосибирске: выезд мастера по всем районам, бесплатная диагностика при ремонте, гарантия 1 год, опыт более 15 лет. Скупка, вывоз и утилизация нерабочих холодильников.",
+        "url": "{{ url_for('index', _external=True) }}",
+        "telephone": "+7-952-936-82-20",
+        "image": "{{ url_for('static', filename='images/favicon/android-chrome-512x512.png', _external=True) }}",
+        "logo": "{{ url_for('static', filename='images/favicon/android-chrome-512x512.png', _external=True) }}",
         "priceRange": "₽₽",
-        "areaServed": {
-            "@type": "City",
-            "name": "Новосибирск"
-        },
+        "paymentAccepted": "Наличные, безналичный расчёт, банковская карта",
         "address": {
             "@type": "PostalAddress",
             "streetAddress": "улица Свободы, 304А",
             "addressLocality": "Новосибирск",
+            "addressRegion": "Новосибирская область",
             "addressCountry": "RU"
+        },
+        "areaServed": {
+            "@type": "City",
+            "name": "Новосибирск"
+        },
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+7-952-936-82-20",
+            "contactType": "customer service",
+            "areaServed": "RU",
+            "availableLanguage": "Russian"
+        },
+        "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "Услуги по ремонту холодильников",
+            "itemListElement": [
+                {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Диагностика неисправности холодильника"}},
+                {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Ремонт и замена компрессора холодильника"}},
+                {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Замена инверторного компрессора на обычный"}},
+                {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Ремонт электронных модулей (плат) холодильника"}},
+                {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Замена термостата и датчиков температуры"}},
+                {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Устранение утечки и заправка фреона"}},
+                {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Ремонт системы No Frost"}},
+                {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Замена вентиляторов холодильника"}},
+                {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Замена пускозащитного реле"}},
+                {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Скупка, вывоз и утилизация холодильников"}}
+            ]
         }
     }
     </script>
@@ -83,12 +128,17 @@
         {% include 'footer.html' %}
     </footer>
 </body>
-<script>
+<script nonce="{{ csp_nonce }}">
     let lastScroll = 0;
     const header = document.querySelector('header');
 
     window.addEventListener('scroll', () => {
         const currentScroll = window.pageYOffset;
+        // пока открыто мобильное меню, шапку не прячем
+        if (header.classList.contains('nav-open')) {
+            lastScroll = currentScroll;
+            return;
+        }
         
         if (currentScroll > lastScroll && currentScroll > 100) {
             // Скролл вниз - скрываем хэдер
@@ -101,7 +151,7 @@
         lastScroll = currentScroll;
     });
 </script>
-<script>
+<script nonce="{{ csp_nonce }}">
     // Для main-button
     document.querySelector('.main-button').addEventListener('click', function(e) {
         const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
@@ -120,6 +170,34 @@
         if (isMobile) {
             window.location.href = 'tel:89529368220';
         } else {
+            document.getElementById('phoneModal').classList.add('show');
+        }
+    });
+
+    // Для кнопок на карточках услуг: на телефоне звонок по ссылке, на компьютере окно с номером
+    document.querySelectorAll('.service-button').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+
+            if (!isMobile) {
+                e.preventDefault();
+                document.getElementById('phoneModal').classList.add('show');
+            }
+        });
+    });
+
+    // «Отправить фото» в утилизации: всегда просто показываем номер (и на телефоне тоже)
+    document.querySelector('.disposal-button').addEventListener('click', function(e) {
+        e.preventDefault();
+        document.getElementById('phoneModal').classList.add('show');
+    });
+
+    // Кружок с трубкой в подвале: на телефоне открывается набор номера (tel:), на компьютере — окно с номером
+    document.querySelector('.footer-call').addEventListener('click', function(e) {
+        const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+
+        if (!isMobile) {
+            e.preventDefault();
             document.getElementById('phoneModal').classList.add('show');
         }
     });

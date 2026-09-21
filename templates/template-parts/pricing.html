@@ -1,3 +1,140 @@
 <section id="pricing">
+    <div class="pricing-conteiner">
+        <div class="services-head">
+            <div>
+                <div class="section-kicker" data-reveal style="--i:0">Услуги</div>
+                <h2 class="section-header" data-reveal style="--i:0">Наши услуги</h2>
+            </div>
+            <div class="services-nav" data-reveal style="--i:1">
+                <button class="services-arrow" type="button" data-dir="-1" aria-label="Предыдущие услуги">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+                </button>
+                <button class="services-arrow" type="button" data-dir="1" aria-label="Следующие услуги">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+                </button>
+            </div>
+        </div>
 
+        <div class="services" data-reveal style="--i:1">
+            <article class="service-card">
+                <span class="service-star service-star--ro" aria-hidden="true">*</span>
+                <h3 class="service-title">Диагностика неисправности</h3>
+                <p class="service-text">Проверяем компрессор, электронику, датчики и&nbsp;систему охлаждения. Называем причину поломки и&nbsp;точную стоимость до&nbsp;начала работ.</p>
+                <a class="service-button" href="tel:89529368220"><span>Позвонить</span></a>
+            </article>
+            <article class="service-card">
+                <span class="service-star service-star--so" aria-hidden="true">*</span>
+                <h3 class="service-title">Ремонт и&nbsp;замена компрессора</h3>
+                <p class="service-text">Холодильник гудит, но&nbsp;не&nbsp;морозит, или не&nbsp;включается совсем? Восстановим работу мотора или поставим новый компрессор с&nbsp;гарантией.</p>
+                <a class="service-button" href="tel:89529368220"><span>Позвонить</span></a>
+            </article>
+            <article class="service-card">
+                <span class="service-star service-star--tw" aria-hidden="true">*</span>
+                <h3 class="service-title">Замена инверторного компрессора</h3>
+                <p class="service-text">Меняем дорогой инверторный компрессор на&nbsp;надёжный обычный мотор на&nbsp;любых холодильниках. Дешевле оригинала и&nbsp;проще в&nbsp;дальнейшем ремонте.</p>
+                <a class="service-button" href="tel:89529368220"><span>Позвонить</span></a>
+            </article>
+            <article class="service-card">
+                <span class="service-star service-star--ti" aria-hidden="true">*</span>
+                <h3 class="service-title">Ремонт электронных модулей</h3>
+                <p class="service-text">Ошибки на&nbsp;дисплее, самопроизвольные отключения, не&nbsp;реагирует на&nbsp;кнопки. Ремонтируем платы управления или меняем модуль целиком.</p>
+                <a class="service-button" href="tel:89529368220"><span>Позвонить</span></a>
+            </article>
+            <article class="service-card">
+                <span class="service-star service-star--cw" aria-hidden="true">*</span>
+                <h3 class="service-title">Замена термостата и&nbsp;датчиков</h3>
+                <p class="service-text">Если в&nbsp;камере слишком тепло или всё перемораживается&nbsp;— виноват термостат или датчик температуры. Заменим за&nbsp;один визит.</p>
+                <a class="service-button" href="tel:89529368220"><span>Позвонить</span></a>
+            </article>
+            <article class="service-card">
+                <span class="service-star service-star--co" aria-hidden="true">*</span>
+                <h3 class="service-title">Устранение утечки фреона</h3>
+                <p class="service-text">Находим место утечки, запаиваем контур, вакуумируем систему и&nbsp;заправляем фреоном по&nbsp;норме производителя.</p>
+                <a class="service-button" href="tel:89529368220"><span>Позвонить</span></a>
+            </article>
+            <article class="service-card">
+                <span class="service-star service-star--ra" aria-hidden="true">*</span>
+                <h3 class="service-title">Ремонт системы No&nbsp;Frost</h3>
+                <p class="service-text">Снеговая шуба в&nbsp;морозилке и&nbsp;плюс в&nbsp;холодильной камере&nbsp;— признак сбоя оттайки. Меняем ТЭН, таймер или предохранитель.</p>
+                <a class="service-button" href="tel:89529368220"><span>Позвонить</span></a>
+            </article>
+            <article class="service-card">
+                <span class="service-star service-star--bf" aria-hidden="true">*</span>
+                <h3 class="service-title">Замена вентиляторов</h3>
+                <p class="service-text">Посторонний шум, треск или холод только у&nbsp;задней стенки. Меняем вентилятор испарителя или конденсатора.</p>
+                <a class="service-button" href="tel:89529368220"><span>Позвонить</span></a>
+            </article>
+            <article class="service-card">
+                <span class="service-star service-star--pt" aria-hidden="true">*</span>
+                <h3 class="service-title">Замена пускового реле</h3>
+                <p class="service-text">Щелчки при запуске, компрессор включается и&nbsp;сразу гаснет. Меняем пускозащитное реле, чтобы сберечь мотор от&nbsp;перегрева.</p>
+                <a class="service-button" href="tel:89529368220"><span>Позвонить</span></a>
+            </article>
+        </div>
+    </div>
 </section>
+
+<script nonce="{{ csp_nonce }}">
+    // карусель услуг: стрелки листают на одну карточку, на краях гаснут
+    (function () {
+        var track = document.querySelector('#pricing .services');
+        var arrows = document.querySelectorAll('#pricing .services-arrow');
+        if (!track) return;
+
+        function step() {
+            var card = track.querySelector('.service-card');
+            var gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+            return card ? card.offsetWidth + gap : track.clientWidth;
+        }
+        function update() {
+            var max = track.scrollWidth - track.clientWidth - 2;
+            arrows[0].disabled = track.scrollLeft <= 2;
+            arrows[1].disabled = track.scrollLeft >= max;
+        }
+        arrows.forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                track.scrollBy({ left: step() * Number(btn.dataset.dir), behavior: 'smooth' });
+            });
+        });
+        // перетягивание мышью (на тач-экранах и так листается пальцем)
+        var drag = null;
+        track.addEventListener('pointerdown', function (e) {
+            if (e.pointerType !== 'mouse' || e.button !== 0) return;
+            drag = { x: e.clientX, left: track.scrollLeft, moved: false };
+        });
+        window.addEventListener('pointermove', function (e) {
+            if (!drag) return;
+            var dx = e.clientX - drag.x;
+            if (!drag.moved && Math.abs(dx) < 5) return;
+            if (!drag.moved) {
+                drag.moved = true;
+                track.classList.add('is-dragging');
+            }
+            track.scrollLeft = drag.left - dx;
+        });
+        window.addEventListener('pointerup', function () {
+            if (!drag) return;
+            var moved = drag.moved;
+            drag = null;
+            if (!moved) return;
+            // возвращаем привязку и доводим до ближайшей карточки
+            var from = track.scrollLeft;
+            track.classList.remove('is-dragging');
+            var s = step();
+            track.scrollLeft = from;
+            track.scrollTo({ left: Math.round(from / s) * s, behavior: 'smooth' });
+            // клик после перетягивания не должен срабатывать на кнопке
+            function block(ev) {
+                ev.preventDefault();
+                ev.stopPropagation();
+            }
+            track.addEventListener('click', block, true);
+            setTimeout(function () { track.removeEventListener('click', block, true); }, 0);
+        });
+        track.addEventListener('dragstart', function (e) { e.preventDefault(); });
+
+        track.addEventListener('scroll', update, { passive: true });
+        window.addEventListener('resize', update);
+        update();
+    })();
+</script>

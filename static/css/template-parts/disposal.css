@@ -2,12 +2,13 @@
 #disposal {
     position: relative;
     overflow: hidden;
-    min-height: 100vh;
+    /* высота по содержимому, а не на весь экран */
     display: flex;
     align-items: center;
     background:
-        radial-gradient(ellipse at 80% 30%, rgba(30, 94, 255, 0.20) 0%, transparent 55%),
-        linear-gradient(180deg, #0F2438 0%, #091726 100%);
+        radial-gradient(ellipse at 80% 30%, var(--glow-spot) 0%, transparent 55%),
+        var(--bg-1);
+    border-top: 1px solid var(--hairline);
 }
 
 .disposal-conteiner {
@@ -25,34 +26,113 @@
     padding: clamp(40px, 5vw, 70px) var(--gutter);
 }
 
+.disposal-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(32px, 4vw, 64px);
+    /* карточки по центру высоты левой колонки, а не прижаты к её верху */
+    align-items: center;
+}
+
+/* ---- левая колонка ---- */
+.disposal-intro {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(16px, 1.6vw, 22px);
+}
+.disposal-kicker {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--blue-2);
+}
 .disposal-header {
     color: var(--text);
-    font-size: clamp(32px, 5vw, 64px);
+    font-size: clamp(28px, 3.4vw, 50px);
     font-weight: 700;
     line-height: 1.1;
+    text-wrap: balance;
 }
-
-.disposal-title {
-    color: var(--text);
-    font-size: clamp(19px, 1.9vw, 26px);
-    font-weight: 600;
-    line-height: 1.35;
-    max-width: 760px;
-    margin-top: clamp(24px, 3vw, 40px);
-    padding: clamp(18px, 1.8vw, 26px);
-    border-radius: 18px;
-    background: var(--navy-soft);
-    border: 1px solid var(--glass-brd);
-    border-left: 4px solid var(--blue);
-    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.3);
-}
-
 .disposal-description {
     color: var(--text-dim);
-    font-size: clamp(13px, 1.1vw, 16px);
-    line-height: 1.75;
-    max-width: 720px;
-    margin-top: clamp(20px, 2.2vw, 32px);
+    font-size: clamp(15px, 1.15vw, 17px);
+    line-height: 1.65;
+    max-width: 560px;
+}
+/* цвет текста задаём на span: в main.css у tel-ссылок стоит color: inherit !important */
+a.disposal-button span {
+    color: var(--blue-3);
+}
+a.disposal-button {
+    align-self: flex-start;
+    display: inline-flex;
+    margin-top: 8px;
+    padding: 14px 24px;
+    border-radius: 999px;
+    border: 1px solid rgba(91, 147, 255, 0.45);
+    color: var(--blue-3);
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 0.25s ease, border-color 0.25s ease;
+}
+a.disposal-button:hover {
+    background: rgba(91, 147, 255, 0.12);
+    border-color: rgba(91, 147, 255, 0.7);
+}
+
+/* ---- правая колонка: карточки ---- */
+.disposal-cards {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+.disposal-card {
+    display: flex;
+    /* текст по центру номера — однострочные карточки не выглядят пустыми снизу */
+    align-items: center;
+    gap: 16px;
+    padding: 22px 24px;
+    border-radius: var(--radius-md);
+    background: var(--card-bg);
+    border: 1px solid var(--card-brd);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+}
+.disposal-card p {
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.55;
+}
+.disposal-num {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    background: rgba(91, 147, 255, 0.16);
+    color: var(--blue-3);
+    font-size: 13px;
+    font-weight: 700;
+}
+/* предупреждение — тёплый красноватый тон */
+.disposal-card--warn {
+    background: rgba(255, 140, 120, 0.08);
+    border-color: rgba(255, 140, 120, 0.3);
+}
+.disposal-card--warn .disposal-num {
+    background: rgba(255, 140, 120, 0.18);
+    color: #FFB3A3;
+    font-size: 16px;
+    font-weight: 800;
+}
+.disposal-card--warn p {
+    color: #FFD8CF;
+    font-weight: 600;
 }
 
 .snowflakes {
@@ -62,9 +142,7 @@
     transform: translateY(-50%);
     height: clamp(240px, 32vw, 560px);
     z-index: -1;
-    opacity: 0.16;
-    filter: brightness(1.5) hue-rotate(195deg) saturate(1.8)
-            drop-shadow(0 0 30px rgba(30, 94, 255, 0.25));
+    opacity: 0.2;
     pointer-events: none;
 }
 
@@ -73,33 +151,38 @@
     .snowflakes {
         height: 760px;
         right: -110px;
-        opacity: 0.18;
+        opacity: 0.2;
     }
 }
 @media (min-width: 1600px) {
     .snowflakes {
         height: 880px;
         right: -140px;
-        opacity: 0.18;
+        opacity: 0.2;
     }
 }
 
 @media (max-width: 900px) {
-    #disposal {
-        min-height: 0;
+    .disposal-grid {
+        grid-template-columns: 1fr;
     }
-    .disposal-conteiner {
-        text-align: center;
-    }
-    .disposal-title,
-    .disposal-description {
-        max-width: 100%;
-        margin-left: auto;
-        margin-right: auto;
-        text-align: left;
+    a.disposal-button {
+        padding: 12px 18px;
+        font-size: 14px;
     }
     .snowflakes {
-        opacity: 0.07;
+        opacity: 0.2;
         right: -80px;
+    }
+}
+
+/* телефон: отступы в карточках поменьше — тексту шире, строк меньше */
+@media (max-width: 640px) {
+    .disposal-card {
+        gap: 14px;
+        padding: 18px;
+    }
+    .disposal-card p {
+        font-size: 14px;
     }
 }

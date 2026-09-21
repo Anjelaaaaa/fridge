@@ -2,17 +2,19 @@
 #contact {
     position: relative;
     overflow: hidden;
-    min-height: 100vh;
+    /* высота по содержимому, а не на весь экран */
     display: flex;
     align-items: center;
     background:
-        radial-gradient(ellipse at 85% 75%, rgba(30, 94, 255, 0.14) 0%, transparent 55%),
-        linear-gradient(180deg, #091726 0%, #17334E 55%, #091726 100%);
+        /* свечение вверху — внизу секция спокойная, переход в подвал ровный */
+        radial-gradient(ellipse at 85% 25%, var(--glow-spot) 0%, transparent 55%),
+        var(--bg-1);
+    border-top: 1px solid var(--hairline);
 }
 #contact::before {
     content: '';
     position: absolute;
-    bottom: -180px;
+    top: -180px;
     left: -140px;
     width: 520px;
     height: 520px;
@@ -36,85 +38,82 @@
     padding: clamp(40px, 5vw, 70px) var(--gutter);
 }
 
+.contact-content {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(32px, 4vw, 64px);
+    align-items: start;
+}
+.contact-left,
+.contact-right {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+.contact-left { gap: 22px; }
+.contact-right { gap: 12px; }
+
+.contact-kicker {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--blue-2);
+}
+.contact-kicker--muted {
+    color: var(--text-mute);
+}
 .contact-header {
     color: var(--text);
-    text-shadow: 0 0 40px rgba(30, 94, 255, 0.15);
-    font-size: clamp(32px, 5vw, 64px);
+    font-size: clamp(28px, 3.4vw, 50px);
     font-weight: 700;
     line-height: 1.1;
 }
-
-.contact-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: stretch;
-    gap: clamp(24px, 3vw, 48px);
-    margin-top: clamp(28px, 3vw, 46px);
-}
-.contact-left {
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-}
-.contact-right {
-    flex: 1.15;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-}
-
-.contact-title {
-    color: var(--text);
-    font-size: clamp(19px, 1.8vw, 26px);
-    font-weight: 600;
-    line-height: 1.3;
-    margin-top: 26px;
-}
-.contact-left .contact-title:first-child,
-.contact-right .contact-title:first-child {
-    margin-top: 0;
-}
 .contact-description {
     color: var(--text-dim);
-    font-size: clamp(14px, 1.05vw, 16px);
+    font-size: clamp(15px, 1.15vw, 17px);
     line-height: 1.65;
-    margin-top: 14px;
     max-width: 560px;
 }
 
-.contact-text {
-    display: flex;
-    align-items: center;
+/* карточки «Адрес» и «Телефон» */
+.contact-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 14px;
-    color: var(--text);
-    font-size: clamp(15px, 1.3vw, 20px);
-    font-weight: 500;
-    font-style: normal;
-    margin-top: 14px;
+    margin-top: 8px;
 }
-a.contact-text {
+.contact-card {
+    padding: 22px;
+    border-radius: var(--radius-md);
+    background: var(--card-bg);
+    border: 1px solid var(--card-brd);
+}
+.contact-label {
+    margin-bottom: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-mute);
+}
+.contact-value {
+    display: block;
+    font-style: normal;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--text);
     text-decoration: none;
+}
+/* цвет номера — на span: у tel-ссылок в main.css color: inherit !important */
+.contact-phone span {
+    font-size: 18px;
+    color: var(--text);
     transition: color 0.25s ease;
 }
-a.contact-text:hover {
-    color: var(--blue-2);
-}
-.contact-ic {
-    flex-shrink: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 46px;
-    height: 46px;
-    border-radius: 14px;
-    background: var(--blue);
-    box-shadow: 0 10px 22px rgba(30, 94, 255, 0.32);
-    color: #ffffff;
-}
-.contact-ic svg {
-    width: 22px;
-    height: 22px;
+.contact-phone:hover span {
+    color: var(--blue-3);
 }
 
 .contact-button {
@@ -122,7 +121,7 @@ a.contact-text:hover {
     box-sizing: border-box;
     /* пилюля по ширине надписи, с бликом при наведении */
     border-radius: 999px;
-    background: linear-gradient(135deg, #4C86FF 0%, #1E5EFF 50%, #1446D6 100%);
+    background: var(--btn-grad);
     color: #ffffff;
     font-weight: 600;
     letter-spacing: 0.5px;
@@ -141,7 +140,6 @@ a.contact-text:hover {
     height: 68px;
     flex-shrink: 0;
     font-size: clamp(16px, 1.4vw, 20px);
-    margin-top: auto;
 }
 .contact-button::after {
     content: '';
@@ -170,67 +168,45 @@ a.contact-text:hover {
 /* Карта — рамка-линия, тянется до низа наравне с кнопкой */
 .map {
     position: relative;
-    flex: 1;
-    margin-top: 16px;
-    padding: 7px;
-    border: 1px solid var(--glass-brd);
-    background: var(--navy-soft);
-    border-radius: 18px;
-    width: 100%;
-    min-height: 240px;
+    aspect-ratio: 4 / 3;
+    padding: 6px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--card-brd);
+    background: var(--card-bg);
     box-sizing: border-box;
     overflow: hidden;
-    box-shadow: 0 22px 46px rgba(0, 0, 0, 0.35);
 }
-/* Карта остаётся в дневной схеме 2ГИС — тёмная рамка вокруг держит её
-   в общем строе секции, фильтры на виджет не накладываем. */
+/* Карта остаётся в дневной схеме 2ГИС, фильтры на виджет не накладываем */
 #map_281996780 {
     display: block;
-    border-radius: 12px;
+    border-radius: 18px;
     width: 100% !important;
     height: 100% !important;
-    min-height: 0;
 }
 
 .mark {
     display: none;
 }
 
-@media (max-width: 900px) {
-    #contact {
-        min-height: 0;
-    }
-    .contact-content {
-        flex-direction: column;
-    }
-    .contact-left,
-    .contact-right {
-        flex: none;
-        width: 100%;
-    }
-    .contact-header {
-        text-align: center;
-    }
-    .contact-title,
-    .contact-description {
-        text-align: center;
-        max-width: 100%;
-    }
-    .contact-text {
-        justify-content: center;
-    }
-    .contact-button {
-        margin: 26px auto 0 auto;
-    }
-    .map {
-        flex: none;
-        height: 300px;
-        min-height: 0;
-    }
+/* крупный маркер у правого края: за картой, низ и край срезаны секцией */
+.contact-mark {
+    position: absolute;
+    /* справа край срезан секцией, по высоте маркер целиком внутри блока, чуть выше низа */
+    right: clamp(-180px, -6vw, -50px);
+    bottom: 4%;
+    height: min(90%, 780px);
+    width: auto;
+    aspect-ratio: 753 / 1017;
+    z-index: 0;
+    pointer-events: none;
 }
 
-@media (max-width: 560px) {
-    .map {
-        height: 250px;
+@media (max-width: 900px) {
+    .contact-content {
+        grid-template-columns: 1fr;
+    }
+    .contact-mark {
+        height: 360px;
+        bottom: 20px;
     }
 }

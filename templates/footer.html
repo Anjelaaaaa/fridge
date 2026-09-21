@@ -5,14 +5,14 @@
         </address>
 
         <div class="footer-rules">
-            © <script>document.write(new Date().getFullYear())</script>. Все права защищены.
+            © <script nonce="{{ csp_nonce }}">document.write(new Date().getFullYear())</script>. Все права защищены.
         </div>
     </div>
 
     <div class="footer-right">
-        <div class="circle">
-            <img src="/static/images/main/phone_big.png">
-        </div>
+        <a class="circle footer-call" href="tel:89529368220" aria-label="Позвонить: 8 952 936 82 20">
+            <img src="/static/images/main/phone_big.png" alt="">
+        </a>
         <div class="number">8 952 936 82 20</div>
     </div>
 </div>

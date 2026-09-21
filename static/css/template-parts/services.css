@@ -1,0 +1,441 @@
+/* ===== ЧАСТЫЕ НЕИСПРАВНОСТИ (#repair) и НАШИ УСЛУГИ (#pricing) =====
+   Та же схема, что у остальных секций: тёмный фон, контент в колонке --gutter,
+   надпись-кикер + заголовок, стеклянные карточки с синей обводкой. */
+#repair,
+#pricing {
+    position: relative;
+    overflow: hidden;
+    background:
+        radial-gradient(ellipse at 50% 45%, var(--glow-spot) 0%, transparent 55%),
+        var(--bg-1);
+    border-top: 1px solid var(--hairline);
+}
+#pricing {
+    background:
+        radial-gradient(ellipse at 15% 80%, var(--glow-spot) 0%, transparent 55%),
+        var(--bg-1);
+}
+
+.repair-conteiner,
+.pricing-conteiner {
+    position: relative;
+    z-index: 2;
+    box-sizing: border-box;
+    width: 100%;
+    padding: clamp(40px, 5vw, 70px) var(--gutter);
+}
+
+.section-kicker {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--blue-2);
+}
+.section-header {
+    margin-top: 10px;
+    color: var(--text);
+    font-size: clamp(28px, 3.4vw, 50px);
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+/* ---------- звёздочки-снежинки: символ «*» из разных шрифтов ---------- */
+.fault-star,
+.service-star {
+    position: absolute;
+    line-height: 1;
+    color: var(--blue-3);
+    text-shadow: 0 0 18px rgba(91, 147, 255, 0.45);
+    pointer-events: none;
+    user-select: none;
+}
+.fault-star--tw,
+.service-star--tw { font-family: 'Twinkle Star', serif; }
+.fault-star--uc { font-family: 'Uchen', serif; }
+.fault-star--to { font-family: 'Train One', serif; }
+.fault-star--tm { font-family: 'Text Me One', serif; }
+.fault-star--tp { font-family: 'Tilt Prism', serif; }
+.fault-star--tr { font-family: 'Trochut', serif; }
+.service-star--ro { font-family: 'Rubik One', serif; }
+.service-star--so { font-family: 'Sansita One', serif; }
+.service-star--ti { font-family: 'Titan One', serif; }
+.service-star--co { font-family: 'Coiny', serif; }
+.service-star--ra { font-family: 'Rammetto One', serif; }
+.service-star--bf { font-family: 'Bagel Fat One', serif; }
+.service-star--cw { font-family: 'Chewy', serif; }
+.service-star--pt { font-family: 'Paytone One', serif; }
+
+/* ---------- Частые неисправности: карточки по бокам от холодильника ---------- */
+.faults {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(20px, 3vw, 48px);
+    margin-top: clamp(28px, 3vw, 44px);
+}
+.fault-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(18px, 2.4vw, 36px);
+}
+.fault-card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 76px;
+    padding: 20px 26px;
+    border-radius: var(--radius-md);
+    background: var(--card-bg);
+    border: 1px solid var(--card-brd);
+}
+.fault-card p {
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.45;
+}
+.fault-star {
+    /* Все звёздочки одной видимой высоты (--star), центр знака — ровно в точке
+       на углу или краю карточки. Замерено в браузере для каждого шрифта:
+       --k  — во сколько раз кегль больше видимой высоты «*»,
+       --cx/--cy — где центр знака внутри строки, в долях кегля. */
+    --star: 34px;
+    font-size: calc(var(--star) * var(--k));
+    transform: translate(calc(-1em * var(--cx)), calc(-1em * var(--cy)));
+}
+.fault-star--tw { --k: 2.778; --cx: 0.23;  --cy: 0.31; }
+.fault-star--uc { --k: 3.846; --cx: 0.135; --cy: 0.23; }
+.fault-star--to { --k: 2.128; --cx: 0.25;  --cy: 0.255; }
+.fault-star--tm { --k: 3.846; --cx: 0.165; --cy: 0.23; }
+.fault-star--tp { --k: 1.961; --cx: 0.295; --cy: 0.375; }
+.fault-star--tr { --k: 2.632; --cx: 0.25;  --cy: 0.32; }
+
+/* точка привязки — угол или середина нижнего края, как в макете */
+.fault-list--left  .fault-card:nth-child(1) .fault-star { left: 0;    top: 0; }
+.fault-list--left  .fault-card:nth-child(2) .fault-star { left: 46%;  top: 100%; }
+.fault-list--left  .fault-card:nth-child(3) .fault-star { left: 0;    top: 100%; }
+.fault-list--right .fault-card:nth-child(1) .fault-star { left: 100%; top: 0; }
+.fault-list--right .fault-card:nth-child(2) .fault-star { left: 46%;  top: 100%; }
+.fault-list--right .fault-card:nth-child(3) .fault-star { left: 100%; top: 100%; }
+/* левые карточки — текст ближе к холодильнику */
+.fault-list--left .fault-card { justify-content: flex-start; }
+
+/* эмблема по центру: «циферблат термостата» со снежинкой —
+   шкала делений, вращающиеся кольца, спутники на орбитах, звёздочка-иней */
+.faults-emblem {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: clamp(220px, 24vw, 340px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle, rgba(91, 147, 255, 0.30) 0%, rgba(30, 94, 255, 0.10) 38%, rgba(30, 94, 255, 0.03) 62%, transparent 72%);
+    border: 1px solid rgba(91, 147, 255, 0.28);
+    box-shadow: inset 0 0 70px rgba(91, 147, 255, 0.14), 0 0 90px rgba(30, 94, 255, 0.22);
+}
+/* пунктирное кольцо — медленно в обратную сторону */
+.faults-emblem::before {
+    content: '';
+    position: absolute;
+    inset: 17%;
+    border-radius: 50%;
+    border: 1px dashed rgba(143, 180, 255, 0.35);
+    animation: emblemSpin 60s linear infinite reverse;
+}
+/* шкала делений по внешнему краю, каждое 30° — длиннее */
+.emblem-ticks {
+    position: absolute;
+    inset: 4%;
+    border-radius: 50%;
+    background:
+        repeating-conic-gradient(rgba(143, 180, 255, 0.75) 0 0.9deg, transparent 0.9deg 30deg),
+        repeating-conic-gradient(rgba(143, 180, 255, 0.35) 0 0.6deg, transparent 0.6deg 6deg);
+    /* closest-side: проценты — от края круга, а не от угла квадрата */
+    -webkit-mask: radial-gradient(circle closest-side, transparent 86%, #000 87%, #000 97%, transparent 98%);
+            mask: radial-gradient(circle closest-side, transparent 86%, #000 87%, #000 97%, transparent 98%);
+    animation: emblemSpin 120s linear infinite;
+}
+/* орбиты со светящимися точками-спутниками */
+.emblem-orbit {
+    position: absolute;
+    border-radius: 50%;
+}
+.emblem-orbit::after {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: 50%;
+    width: 6px;
+    height: 6px;
+    margin-left: -3px;
+    border-radius: 50%;
+    background: var(--blue-4);
+    box-shadow: 0 0 10px 2px rgba(143, 180, 255, 0.9);
+}
+.emblem-orbit--a {
+    inset: 17%;
+    animation: emblemSpin 14s linear infinite;
+}
+.emblem-orbit--b {
+    inset: 30%;
+    animation: emblemSpin 9s linear infinite reverse;
+}
+.emblem-orbit--b::after {
+    width: 4px;
+    height: 4px;
+    margin-left: -2px;
+    top: -2px;
+}
+/* звёздочка: градиент «иней» и мягкая пульсация свечения */
+.faults-emblem span {
+    /* вне потока — крупный глиф не растягивает круг */
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-family: 'Twinkle Star', serif;
+    font-size: clamp(260px, 28vw, 400px);
+    line-height: 1;
+    background: linear-gradient(160deg, #FFFFFF 10%, #BFD3FF 45%, #5B93FF 90%);
+    -webkit-background-clip: text;
+            background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 18px rgba(91, 147, 255, 0.7));
+    /* центр знака «*» в Twinkle Star выше середины строки — опускаем;
+       подобрано по кольцам, в em, чтобы не зависело от размера круга */
+    transform: translate(0.017em, 0.107em);
+    animation: emblemGlow 4s ease-in-out infinite;
+}
+@keyframes emblemSpin {
+    to { transform: rotate(360deg); }
+}
+@keyframes emblemGlow {
+    0%, 100% { filter: drop-shadow(0 0 14px rgba(91, 147, 255, 0.55)); }
+    50%      { filter: drop-shadow(0 0 28px rgba(143, 180, 255, 0.95)); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .faults-emblem::before,
+    .emblem-ticks,
+    .emblem-orbit,
+    .faults-emblem span { animation: none; }
+}
+
+/* ---------- Наши услуги: карусель, одна карточка — одна услуга ---------- */
+.services-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+}
+.services-nav {
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+}
+.services-arrow {
+    width: 52px;
+    height: 52px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border-radius: 50%;
+    border: 1px solid rgba(91, 147, 255, 0.45);
+    background: transparent;
+    color: var(--blue-3);
+    cursor: pointer;
+    transition: background 0.25s ease, border-color 0.25s ease, opacity 0.25s ease;
+}
+.services-arrow svg {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.services-arrow:hover:not(:disabled) {
+    background: rgba(91, 147, 255, 0.12);
+    border-color: rgba(91, 147, 255, 0.7);
+}
+.services-arrow:disabled {
+    opacity: 0.3;
+    cursor: default;
+}
+
+.services {
+    /* видимая высота звёздочки — одна для всех шрифтов */
+    --star: clamp(120px, 10vw, 150px);
+    --gap: 18px;
+    --per: 3;
+    display: flex;
+    gap: var(--gap);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    /* место под верх звёздочек внутри области прокрутки — иначе их обрежет */
+    margin-top: 12px;
+    padding-top: calc(var(--star) * 0.38 + 24px);
+}
+.services {
+    cursor: grab;
+}
+/* во время перетягивания мышью привязка мешает — отключаем её */
+.services.is-dragging {
+    cursor: grabbing;
+    scroll-snap-type: none;
+    scroll-behavior: auto;
+    user-select: none;
+}
+.services.is-dragging a {
+    cursor: grabbing;
+}
+.services::-webkit-scrollbar {
+    display: none;
+}
+.service-card {
+    position: relative;
+    flex: 0 0 calc((100% - var(--gap) * (var(--per) - 1)) / var(--per));
+    box-sizing: border-box;
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    /* текст начинается под нижним краем звёздочки */
+    padding: calc(var(--star) * 0.62 + 28px) 28px 28px;
+    border-radius: var(--radius-lg);
+    background: var(--card-bg);
+    border: 1px solid var(--card-brd);
+    transition: border-color 0.3s ease;
+}
+.service-card:hover {
+    border-color: var(--card-brd-hover);
+}
+.service-star {
+    /* центр знака — по центру карточки, чуть ниже её верхнего края.
+       Кегль и сдвиг подобраны по замеру каждого шрифта, как у звёздочек
+       в «Частых неисправностях»: --k — кегль к видимой высоте,
+       --cx/--cy — положение центра знака в строке, в долях кегля */
+    left: 50%;
+    top: calc(var(--star) * 0.12);
+    font-size: calc(var(--star) * var(--k));
+    line-height: 1;
+    transform: translate(calc(-1em * var(--cx)), calc(-1em * var(--cy)));
+    /* контур + светлая синяя заливка (непрозрачная, чтобы рамка карточки не просвечивала) */
+    color: #1A3563;
+    -webkit-text-stroke: 2.5px var(--blue-3);
+    text-shadow: none;
+    filter: drop-shadow(0 0 12px rgba(91, 147, 255, 0.45));
+}
+.service-star--ro { --k: 2.632; --cx: 0.225; --cy: 0.28; }
+.service-star--so { --k: 2.326; --cx: 0.275; --cy: 0.345; }
+.service-star--tw { --k: 2.778; --cx: 0.23;  --cy: 0.31; }
+.service-star--ti { --k: 1.961; --cx: 0.28;  --cy: 0.305; }
+.service-star--co { --k: 2.083; --cx: 0.285; --cy: 0.22; }
+.service-star--ra { --k: 1.351; --cx: 0.37;  --cy: 0.35; }
+.service-star--bf { --k: 2.326; --cx: 0.255; --cy: 0.255; }
+.service-star--cw { --k: 2.174; --cx: 0.23;  --cy: 0.32; }
+.service-star--pt { --k: 2.174; --cx: 0.245; --cy: 0.37; }
+.service-title {
+    color: var(--text);
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.25;
+    text-align: center;
+}
+.service-text {
+    flex: 1;
+    color: var(--text-dim);
+    font-size: 15px;
+    line-height: 1.55;
+    text-align: center;
+}
+/* кнопка-обводка как «Отправить фото» в утилизации;
+   цвет текста на span — у tel-ссылок в main.css color: inherit !important */
+a.service-button {
+    align-self: stretch;
+    display: flex;
+    justify-content: center;
+    padding: 14px 24px;
+    border-radius: 999px;
+    border: 1px solid rgba(91, 147, 255, 0.45);
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 700;
+    transition: background 0.25s ease, border-color 0.25s ease;
+}
+a.service-button span {
+    color: var(--blue-3);
+}
+a.service-button:hover {
+    background: rgba(91, 147, 255, 0.12);
+    border-color: rgba(91, 147, 255, 0.7);
+}
+
+/* ---------- адаптив ---------- */
+@media (max-width: 1100px) {
+    .faults {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+    /* эмблема над списками, по центру */
+    .faults-emblem {
+        grid-column: 1 / -1;
+        grid-row: 1;
+        justify-self: center;
+        width: 200px;
+    }
+    .faults-emblem span {
+        font-size: 240px;
+    }
+}
+@media (max-width: 1100px) {
+    .services {
+        --per: 2;
+    }
+}
+@media (max-width: 640px) {
+    /* на телефоне листают свайпом: карточка чуть уже экрана, соседняя выглядывает */
+    .services-nav {
+        display: none;
+    }
+    .services {
+        --gap: 14px;
+        --star: 96px;
+    }
+    .service-card {
+        flex-basis: 84%;
+        gap: 12px;
+        padding: calc(var(--star) * 0.62 + 22px) 20px 22px;
+        border-radius: var(--radius-md);
+    }
+    .service-title {
+        font-size: 18px;
+    }
+    .service-text {
+        font-size: 14px;
+    }
+}
+@media (max-width: 640px) {
+    .faults {
+        grid-template-columns: 1fr;
+    }
+    .faults-emblem {
+        display: none;
+    }
+    .fault-star {
+        --star: 30px;
+    }
+    /* на телефоне звёздочка у каждой карточки в одном месте — справа по центру,
+       а не на разных углах: в одну колонку разнобой выглядел случайным */
+    .faults .fault-list .fault-card .fault-star {
+        left: calc(100% - 30px);
+        top: 50%;
+    }
+    .fault-card {
+        padding-right: 58px;
+    }
+}

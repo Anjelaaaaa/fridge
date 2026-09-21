@@ -1,42 +1,33 @@
 <section id="contact">
+    <!-- декоративный маркер-«капля» за картой -->
+    <img class="contact-mark" src="/static/images/main/mark.png" alt="" aria-hidden="true">
     <div class="contact-conteiner">
-        <h2 class="contact-header">Контакты</h2>
-
         <div class="contact-content">
             <div class="contact-left">
-                <h3 class="contact-title">Остались вопросы?</h3>
-                <p class="contact-description">
-                    Позвоните нам или оставьте заявку прямо сейчас и мы бесплатно ответим на все ваши вопросы и договоримся о ремонте на удобное для вас время. <br><br>
-                    Обслуживаем все районы города Новосибирск.
-                </p>
+                <div class="contact-kicker" data-reveal style="--i:0">Контакты</div>
+                <h2 class="contact-header" data-reveal style="--i:0">Остались вопросы?</h2>
+                <p class="contact-description" data-reveal style="--i:0">Позвоните нам или оставьте заявку прямо сейчас — бесплатно ответим на&nbsp;все вопросы и&nbsp;договоримся о&nbsp;ремонте на&nbsp;удобное для вас время. Обслуживаем все районы города Новосибирск.</p>
 
-                <h3 class="contact-title">Адрес</h3>
-                <address class="contact-text">
-                    <span class="contact-ic">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    </span>
-                    Новосибирск, улица Свободы 304А
-                </address>
+                <div class="contact-cards">
+                    <div class="contact-card" data-reveal style="--i:1">
+                        <div class="contact-label">Адрес</div>
+                        <address class="contact-value">Новосибирск, улица Свободы 304А</address>
+                    </div>
+                    <div class="contact-card" data-reveal style="--i:2">
+                        <div class="contact-label">Телефон</div>
+                        <a class="contact-value contact-phone" href="tel:89529368220"><span>8&nbsp;952&nbsp;936&nbsp;82&nbsp;20</span></a>
+                    </div>
+                </div>
 
-                <h3 class="contact-title">Номер телефона</h3>
-                <a class="contact-text" href="tel:89529368220">
-                    <span class="contact-ic">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                    </span>
-                    8 952 936 82 20
-                </a>
-
-                <div class="contact-button">Позвонить</div>
+                <div class="contact-button" data-reveal style="--i:3">Позвонить</div>
             </div>
 
-            <div class="contact-right">
-                <h3 class="contact-title">Мы на карте</h3>
+            <div class="contact-right" data-reveal style="--i:1">
+                <div class="contact-kicker contact-kicker--muted">Мы на карте</div>
                 <div class="map">
                     <iframe id="map_281996780" title="Карта проезда: Новосибирск, улица Свободы 304А" loading="lazy" frameborder="0" width="943px" height="591px" src="https://makemap.2gis.ru/widget?data=eJw1kFFvwiAUhf_L3eMaA21pSxMfDEZn5kxZTBa3-NAJc2S1NJS61cb_PqgbvBDO_Q7nMIA2QhopllKfpDVKtpC_DWD7RkIOC1nazkgIoDG6kcaO-gAHXWnj9Dv84bfTrbKVJ9Cu4B1lMdq985bNuRasR-uUt4Ldo_X2WfWzy9N8y79m06nDhGwPRjVW6drBxcPsHj3OuRUs89BZLNlqs1z4szP1BrzbsBTtLk5zj6wNP1vWF4x-F8fR8LKqhfyBHKP_dQ3geCvX--h_zQqtauvmD9p9gKpLOxbPwgmNaBzRgJAJIhkhZO94JSBPaXbdB3Aqm0K36hZ4gKq0kI-zJMJJEmGckCSNA6i8PtrhKEwzTLMwDiOXT-uTSxc7V9dcV9XLp5TV63hrTSevv74Uevs" sandbox="allow-modals allow-forms allow-scripts allow-same-origin allow-popups allow-top-navigation-by-user-activation"></iframe>
                 </div>
             </div>
         </div>
-
-        <img class="mark" src="/static/images/main/mark.png" alt="">
     </div>
 </section>

@@ -1,7 +1,7 @@
 /* ===== HEADER ===== */
 header {
     /* прозрачная подложка — работает размытие, а не заливка */
-    background: rgba(15, 36, 56, 0.32);
+    background: rgba(12, 30, 60, 0.35);
     backdrop-filter: blur(22px) saturate(1.6);
     -webkit-backdrop-filter: blur(22px) saturate(1.6);
     padding: 0;
@@ -30,12 +30,12 @@ header {
 }
 
 .logo {
-    font-size: 80px;
+    text-decoration: none;
+    font-size: 54px;
     font-weight: 700;
-    background: linear-gradient(135deg, #ffffff 25%, #5B93FF 70%, #1E5EFF 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    /* логотип чисто белый */
+    color: #ffffff;
+    -webkit-text-fill-color: #ffffff;
     text-shadow: none;
     filter: drop-shadow(0 0 30px rgba(30, 94, 255, 0.2));
     transition: 0.3s;
@@ -48,13 +48,19 @@ header {
 
 .nav-links {
     display: flex;
+    align-items: center;
     gap: 40px;
+}
+/* кнопка «Позвонить» и бутерброд — только в мобильном меню */
+.nav-links a.nav-call,
+.nav-toggle {
+    display: none;
 }
 
 .nav-links a {
     text-decoration: none;
     color: rgba(255, 255, 255, 0.8);
-    font-size: 24px;
+    font-size: 21px;
     transition: all 0.3s ease;
     position: relative;
     padding: 5px 0;
@@ -97,10 +103,10 @@ header {
         height: 90px;
     }
     .logo {
-        font-size: 72px;
+        font-size: 50px;
     }
     .nav-links a {
-        font-size: 22px;
+        font-size: 19px;
     }
 }
 
@@ -109,13 +115,13 @@ header {
         height: 80px;
     }
     .logo {
-        font-size: 64px;
+        font-size: 44px;
     }
     .nav-links {
         gap: 30px;
     }
     .nav-links a {
-        font-size: 20px;
+        font-size: 17px;
     }
 }
 
@@ -123,14 +129,15 @@ header {
     header {
         height: 70px;
     }
+    /* пять ссылок: логотип и шрифт поменьше, чтобы на 1025px оставался зазор */
     .logo {
-        font-size: 52px;
+        font-size: 34px;
     }
     .nav-links {
-        gap: 25px;
+        gap: 22px;
     }
     .nav-links a {
-        font-size: 18px;
+        font-size: 15px;
     }
 }
 
@@ -140,7 +147,7 @@ header {
         backdrop-filter: blur(15px);
     }
     .logo {
-        font-size: 44px;
+        font-size: 32px;
     }
     .nav-links {
         gap: 20px;
@@ -150,96 +157,117 @@ header {
     }
 }
 
-@media (max-width: 768px) {
+/* ===== ТЕЛЕФОН И УЗКИЙ ПЛАНШЕТ: бутерброд =====
+   Меню — не отдельная плашка под шапкой, а сама шапка, раскрывающаяся вниз:
+   тот же стеклянный фон и размытие, один сплошной лист. */
+@media (max-width: 1024px), (max-height: 500px) and (orientation: landscape) {
     header {
-        padding-block: 12px;
         height: auto;
-        backdrop-filter: blur(15px);
-        border-bottom: 1px solid rgba(91, 147, 255, 0.12);
+        padding: 0;
+        backdrop-filter: blur(18px) saturate(1.5);
+        -webkit-backdrop-filter: blur(18px) saturate(1.5);
+        transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+    /* открытое меню читается поверх страницы: стекло плотнее, но того же тона */
+    header.nav-open {
+        background: rgba(12, 30, 60, 0.9);
     }
     .logo-and-nav {
-        flex-direction: column;
-        gap: 12px;
+        flex-direction: row;
+        flex-wrap: wrap;
         height: auto;
     }
+    /* строка шапки — 64px: кнопка 46px + по 9px сверху и снизу */
     .logo {
-        font-size: 36px;
+        font-size: 26px;
+        line-height: 1;
     }
+    .nav-toggle {
+        display: grid;
+        place-content: center;
+        gap: 6px;
+        width: 46px;
+        height: 46px;
+        margin: 9px -6px 9px 0;
+        padding: 0;
+        border: 1px solid rgba(91, 147, 255, 0.35);
+        border-radius: 14px;
+        background: rgba(91, 147, 255, 0.1);
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+        transition: background 0.25s ease, border-color 0.25s ease;
+    }
+    .nav-open .nav-toggle {
+        background: rgba(91, 147, 255, 0.18);
+        border-color: rgba(91, 147, 255, 0.6);
+    }
+    .nav-toggle span {
+        display: block;
+        width: 22px;
+        height: 2px;
+        border-radius: 2px;
+        background: var(--blue-4);
+        transition: transform 0.3s ease, opacity 0.2s ease;
+    }
+    /* три полоски → крестик */
+    .nav-open .nav-toggle span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+    .nav-open .nav-toggle span:nth-child(2) { opacity: 0; }
+    .nav-open .nav-toggle span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+    /* список — второй строкой внутри шапки, раскрывается по высоте */
     .nav-links {
-        gap: 20px;
-        flex-wrap: wrap;
-        justify-content: center;
+        flex-basis: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        visibility: hidden;
+        transition: max-height 0.35s ease, opacity 0.25s ease, visibility 0s linear 0.35s;
+    }
+    .nav-open .nav-links {
+        max-height: calc(100vh - 64px);
+        overflow-y: auto;
+        opacity: 1;
+        visibility: visible;
+        transition: max-height 0.35s ease, opacity 0.25s ease 0.05s;
     }
     .nav-links a {
-        font-size: 16px;
+        font-size: 18px;
+        padding: 15px 0;
+        border-top: 1px solid var(--hairline);
     }
     .nav-links a::after {
-        bottom: -4px;
+        display: none;
     }
-}
-
-@media (max-width: 600px) {
-    header {
-        padding-block: 10px;
+    .nav-links a.active {
+        color: var(--blue-3);
     }
-    .logo {
-        font-size: 30px;
+    .nav-links a.nav-call {
+        display: flex;
+        justify-content: center;
+        margin: 12px 0 22px;
+        padding: 15px 20px;
+        border: none;
+        border-radius: 999px;
+        background: var(--btn-grad);
+        box-shadow: 0 6px 18px rgba(30, 94, 255, 0.22);
+        font-size: 17px;
+        font-weight: 600;
     }
-    .nav-links {
-        gap: 15px;
-    }
-    .nav-links a {
-        font-size: 14px;
-    }
-}
-
-@media (max-width: 480px) {
-    header {
-        padding-block: 8px;
-    }
-    .logo {
-        font-size: 24px;
-    }
-    .nav-links {
-        gap: 12px;
-    }
-    .nav-links a {
-        font-size: 13px;
+    /* у tel-ссылок цвет задан через color: inherit !important — красим span */
+    .nav-links a.nav-call span {
+        color: #ffffff;
     }
 }
 
 @media (max-width: 400px) {
-    header {
-        padding-block: 6px;
-    }
     .logo {
-        font-size: 20px;
-    }
-    .nav-links {
-        gap: 8px;
+        font-size: 23px;
     }
     .nav-links a {
-        font-size: 11px;
-    }
-}
-
-@media (max-height: 500px) and (orientation: landscape) {
-    header {
-        padding-block: 5px;
-        height: 60px;
-        backdrop-filter: blur(10px);
-    }
-    .logo-and-nav {
-        flex-direction: row;
-        height: 100%;
-    }
-    .logo {
-        font-size: 28px;
-    }
-    .nav-links {
-        gap: 15px;
-    }
-    .nav-links a {
-        font-size: 14px;
+        font-size: 16px;
+        padding: 14px 0;
     }
 }

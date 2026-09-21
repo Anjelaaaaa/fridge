@@ -15,7 +15,7 @@
     background:
         radial-gradient(ellipse at 70% 50%, rgba(30, 94, 255, 0.12) 0%, transparent 60%),
         radial-gradient(ellipse at 30% 80%, rgba(91, 147, 255, 0.06) 0%, transparent 40%),
-        linear-gradient(180deg, #0F2438 0%, #17334E 100%);
+        linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 55%, var(--bg-1) 100%);
 }
 
 /* Пульсирующая подсветка */
@@ -48,7 +48,7 @@
     font-weight: 500;
     letter-spacing: 2px;
     text-transform: uppercase;
-    color: #8FB4FF;
+    color: var(--blue-3);
     padding: 9px 18px;
     border: 1px solid rgba(30, 94, 255, 0.3);
     border-radius: 100px;
@@ -120,10 +120,11 @@
     line-height: 1.15;
     padding: 15px 54px 15px 20px;
     border-radius: 14px 0 0 14px;
-    background: var(--navy-soft);
+    background: var(--bg-2);
     border: 1px solid var(--glass-brd);
     border-right: none;
-    box-shadow: -18px 18px 44px rgba(0, 0, 0, 0.45);
+    /* лёгкая тень в тон фона — раньше чёрная 45% давала грязное пятно */
+    box-shadow: -8px 10px 24px rgba(8, 20, 43, 0.28);
     white-space: nowrap;
 }
 .main-stat b {
@@ -147,7 +148,7 @@
     box-sizing: border-box;
     /* пилюля по ширине надписи, с бликом при наведении */
     border-radius: 999px;
-    background: linear-gradient(135deg, #4C86FF 0%, #1E5EFF 50%, #1446D6 100%);
+    background: var(--btn-grad);
     color: #ffffff;
     font-weight: 600;
     letter-spacing: 0.5px;
@@ -338,7 +339,7 @@
         justify-content: center;
         background:
             radial-gradient(ellipse at center, rgba(30, 94, 255, 0.08) 0%, transparent 70%),
-            linear-gradient(180deg, #0F2438 0%, #17334E 100%);
+            linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 55%, var(--bg-1) 100%);
     }
     .main-conteiner::before {
         display: none;
@@ -467,7 +468,9 @@
     .main-conteiner {
         box-sizing: border-box;
         height: auto;
-        min-height: 100vh;
+        /* на весь экран, но не выше 1000px — это высота самого содержимого на широких экранах; на высоких мониторах
+           холодильник и текст иначе терялись в пустоте */
+        min-height: min(100vh, 1000px);
         /* +124px — видимая часть плашек .main-stat (их ширина минус скрытая
            под корпусом часть). За счёт этого левый край плашек попадает
            ровно на общую линию контента остальных секций. */
@@ -545,7 +548,11 @@ canvas.fridge-main {
        сдвинут туда же, чтобы холодильник остался по центру .hero-fridge.
        Сумма полей = -0.8 * --fw, поэтому ширина .hero-fridge по-прежнему = --fw. */
     width: calc(var(--fw) * 1.8);
-    height: calc(var(--fw) * 1.95);
+    /* 1.95 * 3.6 / 3.35 — кадр в fridge3d.js выше на запас под открытую дверь;
+       лишнее уходит вверх отрицательным margin-top, поэтому в раскладке
+       холодильник по-прежнему занимает 1.95 * --fw и стоит там же */
+    height: calc(var(--fw) * 2.0955);
+    margin-top: calc(var(--fw) * -0.1455);
     margin-left: calc(var(--fw) * -0.525);
     margin-right: calc(var(--fw) * -0.275);
     filter: drop-shadow(0 0 40px rgba(30, 94, 255, 0.25));
@@ -579,16 +586,21 @@ canvas.fridge-main {
     .main-conteiner { padding-left: var(--gutter); }
 }
 
-@media (max-width: 1720px) { .main-conteiner { --fw: 372px; } }
-@media (max-width: 1530px) { .main-conteiner { --fw: 314px; } }
-@media (max-width: 1260px) { .main-conteiner { --fw: 257px; } }
+/* --fw-w — предел размера холодильника по ширине экрана (для десктопа),
+   итоговый --fw на десктопе считается ниже с учётом высоты окна */
+.main-conteiner { --fw-w: 460px; }
+@media (max-width: 1720px) { .main-conteiner { --fw: 372px; --fw-w: 372px; } }
+@media (max-width: 1530px) { .main-conteiner { --fw: 314px; --fw-w: 314px; } }
+@media (max-width: 1260px) { .main-conteiner { --fw: 257px; --fw-w: 257px; } }
 @media (max-width: 1024px) { .main-conteiner { --fw: 209px; } .hero-fridge { margin-bottom: 0; } }
+/* на телефоне холодильник — главный герой первого экрана, не значок:
+   раньше на 390px он был 91px шириной */
 @media (max-width: 768px) {
-    .main-conteiner { --fw: 168px; }
+    .main-conteiner { --fw: 190px; }
 }
-@media (max-width: 600px) { .main-conteiner { --fw: 134px; } }
-@media (max-width: 480px) { .main-conteiner { --fw: 112px; } }
-@media (max-width: 400px) { .main-conteiner { --fw: 91px; } }
+@media (max-width: 600px) { .main-conteiner { --fw: 170px; } }
+@media (max-width: 480px) { .main-conteiner { --fw: 150px; } }
+@media (max-width: 400px) { .main-conteiner { --fw: 136px; } }
 @media (max-height: 500px) and (orientation: landscape) {
     .main-conteiner { --fw: 84px; }
 }
@@ -638,14 +650,23 @@ canvas.fridge-main {
 
 /* пояснение к пункту — второй строкой, мельче и приглушённо */
 .main-points li span {
+    /* стеклянная плашка: полупрозрачный синий фон и тонкая синяя рамка, без точки */
     display: block;
-    max-width: 32em;
-    margin-top: 5px;
-    /* крупнее и светлее: читается как полноценное уточнение, а не мелкая сноска */
-    font-size: 0.9em;
-    line-height: 1.45;
-    color: #C3D6F7;
+    width: fit-content;
+    margin-top: 32px;
+    /* выносим влево на ширину отступа пункта — край встаёт по линии галочек */
+    margin-left: -36px;
+    max-width: 26em;
+    padding: 8px 16px;
+    text-wrap: balance;
+    border-radius: 12px;
+    background: rgba(91, 147, 255, 0.1);
+    border: 1px solid rgba(91, 147, 255, 0.28);
+    font-size: 0.76em;
+    line-height: 1.4;
+    color: var(--text-soft);
 }
+
 
 /* кнопка */
 .main-actions {
@@ -659,15 +680,18 @@ canvas.fridge-main {
 @media (max-width: 768px) and (min-height: 501px) {
     /* список и подпись выше двух прежних абзацев: при фиксированной высоте
        блок центрировался с переполнением и холодильник уезжал под шапку.
-       Шапка на телефоне в две строки и высотой 102px — отступ сверху под неё */
+       Шапка на телефоне в одну строку (логотип + бутерброд), 64px — отступ сверху под неё */
     .main-conteiner {
         height: auto;
-        padding-top: 118px;
+        padding-top: 88px;
         padding-bottom: 48px;
     }
     .main-points li {
         font-size: 15px;
         padding-left: 32px;
+    }
+    .main-points li span {
+        margin-left: -32px;
     }
     .main-actions {
         flex-direction: column;
@@ -689,4 +713,188 @@ canvas.fridge-main {
 }
 @media (max-width: 768px) {
     .snowflake { display: none; }
+}
+
+/* ===== ГЕРОЙ НА ДЕСКТОПЕ: всё распределяется по высоте экрана ===== */
+@media (min-width: 1025px) {
+    .main-conteiner {
+        /* --H — высота героя: весь экран, но не больше 1000px */
+        --H: min(100vh, 1000px);
+        --pb: clamp(8px, 1.5vh, 16px);
+        min-height: var(--H);
+        /* сверху — место под фиксированную шапку (~90px) с зазором;
+           зазор побольше, а снизу поменьше — контент стоит чуть ниже центра */
+        padding-top: 128px;
+        padding-bottom: var(--pb);
+        /* холодильник занимает всю высоту под шапкой (canvas = 1.95 * --fw),
+           но не больше, чем позволяет ширина экрана */
+        --fw: max(240px, min(var(--fw-w), calc((var(--H) - 128px - var(--pb)) / 1.95)));
+    }
+    /* центрирование теперь честное — в полосе между шапкой и низом блока,
+       прежний подъём через margin-bottom не нужен */
+    .hero-fridge,
+    .hero-fridge + div {
+        margin-bottom: 0;
+    }
+    /* промежутки в текстовой колонке — доля высоты героя */
+    .main-header  { margin-top: clamp(20px, calc(var(--H) * 0.05), 56px); }
+    .main-title   { margin-top: clamp(20px, calc(var(--H) * 0.046), 52px); }
+    .main-points  { gap: clamp(8px, calc(var(--H) * 0.016), 18px); }
+    .main-actions { margin-top: clamp(28px, calc(var(--H) * 0.07), 76px); }
+}
+
+/* ===== ПОДПИСИ ДЕТАЛЕЙ В 3D-ХОЛОДИЛЬНИКЕ (слой создаёт fridge3d.js) =====
+   Точка-маячок на детали, тонкая выноска и тёмная стеклянная плашка —
+   читается на белом нутре холодильника и не закрывает саму деталь. */
+.fl {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: flex;
+    align-items: center;
+    opacity: 0;
+    white-space: nowrap;
+    will-change: transform, opacity;
+}
+.fl--flip {
+    flex-direction: row-reverse;
+}
+.fl-dot {
+    position: relative;
+    flex: none;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--blue-2);
+    box-shadow: 0 0 0 2px #fff, 0 0 10px 2px rgba(30, 94, 255, 0.6);
+}
+/* мягкий пульс вокруг точки */
+.fl-dot::after {
+    content: '';
+    position: absolute;
+    inset: -5px;
+    border-radius: 50%;
+    border: 1.5px solid var(--blue-2);
+    animation: flPulse 2.2s ease-out infinite;
+}
+.fl-line {
+    flex: none;
+    width: 18px;
+    height: 1.5px;
+    background: linear-gradient(90deg, var(--blue-2), rgba(91, 147, 255, 0.35));
+}
+.fl--flip .fl-line {
+    background: linear-gradient(270deg, var(--blue-2), rgba(91, 147, 255, 0.35));
+}
+.fl-text {
+    padding: 5px 11px;
+    border-radius: 999px;
+    background: rgba(12, 30, 60, 0.88);
+    border: 1px solid rgba(91, 147, 255, 0.45);
+    box-shadow: 0 6px 16px rgba(8, 20, 43, 0.35);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: 0.2px;
+}
+@keyframes flPulse {
+    0%   { transform: scale(0.6); opacity: 0.9; }
+    100% { transform: scale(1.6); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .fl-dot::after { animation: none; opacity: 0; }
+}
+
+/* ===== ТЕЛЕФОН: читаемый заголовок и надпись в одну строку ===== */
+@media (max-width: 600px) {
+    .main-header { font-size: 32px; }
+}
+@media (max-width: 480px) {
+    .main-header { font-size: 30px; }
+    .main-eyebrow {
+        white-space: nowrap;
+        font-size: 10.5px;
+        letter-spacing: 0.06em;
+        padding: 7px 12px;
+    }
+}
+@media (max-width: 400px) {
+    .main-header { font-size: 27px; }
+}
+
+/* ===== ПОДСКАЗКА «ОТКРОЙТЕ» НА РУЧКЕ ДВЕРИ (слой создаёт fridge3d.js) =====
+   Пульсирующий маячок на ручке и синяя плашка рядом. Пропадает после первого открытия. */
+.fh {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: flex;
+    /* маячок на ручке, плашка справа от него */
+    align-items: center;
+    gap: 10px;
+    opacity: 0;
+    pointer-events: none;
+    white-space: nowrap;
+    will-change: transform, opacity;
+}
+.fh-ring {
+    position: relative;
+    flex: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--blue);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.9), 0 0 16px 4px rgba(30, 94, 255, 0.55);
+}
+/* две расходящиеся волны — «сюда можно нажать» */
+.fh-ring::before,
+.fh-ring::after {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    border: 2px solid var(--blue-2);
+    animation: fhWave 1.8s ease-out infinite;
+}
+.fh-ring::after {
+    animation-delay: 0.9s;
+}
+.fh-text {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px 6px 9px;
+    border-radius: 999px;
+    background: var(--btn-grad);
+    box-shadow: 0 6px 16px rgba(30, 94, 255, 0.35);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1;
+    /* лёгкое «покачивание», чтобы плашку заметили */
+    animation: fhNudge 2.4s ease-in-out infinite;
+}
+.fh-text svg {
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+@keyframes fhWave {
+    0%   { transform: scale(1); opacity: 0.9; }
+    100% { transform: scale(2.6); opacity: 0; }
+}
+@keyframes fhNudge {
+    0%, 100% { transform: translateX(0); }
+    50%      { transform: translateX(4px); }
+}
+@media (max-width: 600px) {
+    .fh-text { font-size: 11px; padding: 5px 10px 5px 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .fh-ring::before, .fh-ring::after, .fh-text { animation: none; }
 }

@@ -1,23 +1,48 @@
-@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@200;300;400;500;600;700;800;900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Tourney:wght@200;300;400;500;600;700;800;900&display=swap');
 
-/* ===== DESIGN TOKENS — глубокий синий + тёплый крем + электрик ===== */
+/* ===== DESIGN TOKENS — одна гамма: всё на оттенке синего ~220° =====
+   Фоны и акценты теперь одного тона (раньше фон был сине-зелёный #0F2438,
+   а кнопки и надписи — чисто синие, и рядом они чуть спорили).
+   Роли акцентов:
+     --blue    — заливка кнопок, градиент заголовка, свечения;
+     --blue-2  — надписи-кикеры, активная ссылка, цифры;
+     --blue-3  — светлый синий: обводки, звёздочки, текст на обводочных кнопках;
+     --blue-4  — самый светлый: мелкие детали и подписи на синем. */
 :root {
-    --navy: #0F2438;
-    --navy-deep: #091726;
-    --navy-soft: #17334E;
+    --bg-0: #08142B;   /* самый глубокий — подвал, мобильное меню */
+    --bg-1: #0C1E3C;   /* основной фон всех секций */
+    --bg-2: #142D57;   /* приподнятый — плашки, переходы в градиентах */
+
+    --navy: var(--bg-1);
+    --navy-deep: var(--bg-0);
+    --navy-soft: var(--bg-2);
+
     --blue: #1E5EFF;
     --blue-2: #5B93FF;
+    --blue-3: #8FB4FF;
+    --blue-4: #CFE0FF;
 
-    --bg-0: #091726;
-    --bg-1: #0F2438;
-    --bg-2: #17334E;
-    --accent: #1E5EFF;
-    --accent-2: #5B93FF;
+    --accent: var(--blue);
+    --accent-2: var(--blue-2);
     --accent-grad: linear-gradient(135deg, #1E5EFF, #5B93FF);
+    /* заливка всех основных кнопок */
+    --btn-grad: linear-gradient(135deg, #4C86FF 0%, #1E5EFF 50%, #1446D6 100%);
+
     --text: #ffffff;
     --text-dim: rgba(255, 255, 255, 0.72);
     --text-mute: rgba(255, 255, 255, 0.5);
+    --text-soft: #C9D9FF;  /* приглушённый текст на синих плашках */
+
+    /* карточки — одинаковые во всех блоках */
+    --card-bg: linear-gradient(160deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+    --card-brd: rgba(91, 147, 255, 0.16);
+    --card-brd-hover: rgba(91, 147, 255, 0.45);
+    --radius-lg: 24px;
+    --radius-md: 20px;
+
+    /* мягкое пятно света в секциях и волосяная линия между ними */
+    --glow-spot: rgba(30, 94, 255, 0.14);
+    --hairline: rgba(91, 147, 255, 0.12);
+
     --glass: rgba(255, 255, 255, 0.05);
     --glass-strong: rgba(255, 255, 255, 0.08);
     --glass-brd: rgba(91, 147, 255, 0.28);
@@ -31,14 +56,6 @@
     --pad: clamp(28px, 9vw, 180px);
     --maxw: 1720px;
     --gutter: max(var(--pad), calc((100% - 1720px) / 2));
-
-    /* Тёплая кремовая палитра (вместо морозной) */
-    --light-ink: #0F2438;
-    --light-ink-dim: #5A6E85;
-    --light-card: #ffffff;
-    --light-card-brd: rgba(15, 36, 56, 0.14);
-    --light-shadow: 0 22px 46px rgba(9, 23, 38, 0.13);
-    --light-shadow-hover: 0 32px 64px rgba(9, 23, 38, 0.2);
 }
 
 body {
@@ -60,7 +77,7 @@ footer {
     background-color: var(--bg-0);
 }
 header {
-    background-color: rgba(163, 163, 163, 0.247);
+    background-color: transparent;
     padding: 0 100px 0 100px;
     height: 100px;
     font-size: 16px;
@@ -163,7 +180,7 @@ a[href^="tel"] {
     top: 20px;
     right: 30px;
     font-size: 40px;
-    color: #D9D7D7;
+    color: var(--text-dim);
     cursor: pointer;
     transition: 0.3s;
 }
@@ -183,7 +200,7 @@ a[href^="tel"] {
 }
 .modal-text {
     font-size: 20px;
-    color: #D9D7D7;
+    color: var(--text-dim);
     margin-top: 10px;
 }
 .modal-call-btn {
@@ -201,4 +218,21 @@ a[href^="tel"] {
 .modal-call-btn:hover {
     background: #ffffff;
     transform: scale(1.05);
+}
+
+/* ===== Появление блоков при прокрутке (static/js/reveal.js) =====
+   Прячем, только когда скрипт подключился (класс js-reveal на <html>).
+   fill-mode: backwards — после окончания анимация не держит transform,
+   поэтому наклон карточек за курсором продолжает работать. */
+.js-reveal [data-reveal] {
+    opacity: 0;
+}
+.js-reveal [data-reveal].is-in {
+    opacity: 1;
+    animation: revealRise 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+    animation-delay: calc(var(--i, 0) * 120ms);
+}
+@keyframes revealRise {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: none; }
 }

@@ -578,11 +578,27 @@ canvas.fridge-main {
 .main-stat:nth-child(2) { top: 44%; }
 .main-stat:nth-child(3) { top: 71%; }
 
-/* Плашки и отступ под них (+124px слева) — только там, где для них есть место.
-   Ниже 1360px текстовой колонке уже не хватает ширины на неразрывное
-   «ХОЛОДИЛЬНИКОВ», и заголовок вылезал за правый отступ. */
-@media (max-width: 1360px) {
-    .main-stats { display: none; }
+/* Ноутбуки 1025–1360px: плашки не прячем, а делаем уже (видимая часть 100px вместо 124px),
+   а заголовок плавно уменьшается с шириной окна — неразрывное «ХОЛОДИЛЬНИКОВ»
+   помещается до правого отступа (замерено на 1025/1100/1200/1300/1360). */
+@media (min-width: 1025px) and (max-width: 1360px) {
+    .main-conteiner { padding-left: calc(var(--gutter) + 100px); }
+    .main-stat {
+        width: calc(var(--fw) * 0.2 + 100px);
+        padding-left: 12px;
+    }
+    .main-stat b { font-size: 19px; }
+    .main-stat span { font-size: 10px; }
+    .main-header { font-size: clamp(38px, 3.9vw, 56px); }
+    /* надпись над заголовком — в одну строку */
+    .main-eyebrow {
+        white-space: nowrap;
+        font-size: 13px;
+        letter-spacing: 1px;
+    }
+}
+/* Ниже 1025px (узкий ноутбук развёрнут в колонку, планшет, телефон) — отдельно, см. конец файла */
+@media (max-width: 1024px) {
     .main-conteiner { padding-left: var(--gutter); }
 }
 
@@ -596,11 +612,11 @@ canvas.fridge-main {
 /* на телефоне холодильник — главный герой первого экрана, не значок:
    раньше на 390px он был 91px шириной */
 @media (max-width: 768px) {
-    .main-conteiner { --fw: 190px; }
+    .main-conteiner { --fw: 220px; }
 }
-@media (max-width: 600px) { .main-conteiner { --fw: 170px; } }
-@media (max-width: 480px) { .main-conteiner { --fw: 150px; } }
-@media (max-width: 400px) { .main-conteiner { --fw: 136px; } }
+@media (max-width: 600px) { .main-conteiner { --fw: 200px; } }
+@media (max-width: 480px) { .main-conteiner { --fw: 180px; } }
+@media (max-width: 400px) { .main-conteiner { --fw: 164px; } }
 @media (max-height: 500px) and (orientation: landscape) {
     .main-conteiner { --fw: 84px; }
 }
@@ -696,6 +712,20 @@ canvas.fridge-main {
     .main-actions {
         flex-direction: column;
     }
+    /* единый ритм ~20px между строками героя: раньше заголовок почти прилипал
+       к списку (≈15px), а плашка отрывалась от него на 32px */
+    .main-header {
+        margin-top: 20px;
+    }
+    .main-points {
+        margin-top: 20px;
+    }
+    .main-points li span {
+        margin-top: 20px;
+    }
+    .main-actions {
+        margin-top: 24px;
+    }
 }
 
 /* Снежинка привязана к низу блока, а не к пиксельному top по брейкпоинтам */
@@ -705,12 +735,9 @@ canvas.fridge-main {
         bottom: clamp(40px, 8vh, 90px);
     }
 }
-/* Снежинка декоративная: где под строкой «кнопка + подпись» для неё нет места,
-   её не показываем. Замер: на 1440 при высоте окна 760px она наезжала на подпись,
-   при 820px зазор всего 5px; на телефоне ложилась поверх списка. */
-@media (min-width: 1025px) and (max-height: 860px) {
-    .snowflake { display: none; }
-}
+/* Снежинка декоративная. Раньше на экранах ниже 860px она наезжала на подпись под
+   кнопкой и пряталась; после перераскладки героя она стоит в правом нижнем углу,
+   правее и ниже текста (замер 1280×720: до подписи и кнопки больше 170px). */
 @media (max-width: 768px) {
     .snowflake { display: none; }
 }
@@ -830,13 +857,23 @@ canvas.fridge-main {
     left: 0;
     top: 0;
     display: flex;
-    /* маячок на ручке, плашка справа от него */
+    /* маячок на ручке, плашка справа от него (если справа тесно — слева, класс ставит fridge3d.js) */
     align-items: center;
     gap: 10px;
     opacity: 0;
     pointer-events: none;
     white-space: nowrap;
     will-change: transform, opacity;
+}
+.fh--left {
+    flex-direction: row-reverse;
+}
+.fh--left .fh-text {
+    animation-name: fhNudgeLeft;
+}
+@keyframes fhNudgeLeft {
+    0%, 100% { transform: translateX(0); }
+    50%      { transform: translateX(-4px); }
 }
 .fh-ring {
     position: relative;
@@ -897,4 +934,123 @@ canvas.fridge-main {
 }
 @media (prefers-reduced-motion: reduce) {
     .fh-ring::before, .fh-ring::after, .fh-text { animation: none; }
+}
+
+/* ===== ТЕЛЕФОН И УЗКИЙ ПЛАНШЕТ: текст героя — один ровный блок =====
+   Раньше каждая строка центровалась по своей ширине (список ~415px,
+   плашка ~330px, кнопка ~225px) — «ёлочка» посередине и пустота по бокам.
+   Теперь список и плашка одной ширины, блок не шире 540px и стоит по центру. */
+@media (max-width: 768px) and (min-height: 501px) {
+    .hero-fridge + div {
+        width: 100%;
+        max-width: 540px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .main-points {
+        display: flex;
+        width: 100%;
+    }
+    /* плашка «Сориентируем…» — во всю ширину списка, от линии галочек до края;
+       текст в ней по центру — короткие строки не оставляют пустоту справа */
+    .main-points li span {
+        width: auto;
+        max-width: none;
+        text-align: center;
+    }
+}
+@media (min-width: 601px) and (max-width: 768px) and (min-height: 501px) {
+    .main-header { font-size: 44px; }
+    .main-points li { font-size: 17px; }
+}
+
+/* ===== ПЛАШКИ «15+ / 1 ГОД / 0 ₽» НА ПЛАНШЕТЕ И ТЕЛЕФОНЕ =====
+   Как на компьютере — выглядывают слева из-за корпуса, только компактнее:
+   видимая часть 76px (на телефоне 375px слева от холодильника ровно столько места). */
+@media (max-width: 1024px) and (min-height: 501px) {
+    /* ширина блока — ровно по холодильнику, чтобы он стоял по центру */
+    .hero-fridge {
+        width: var(--fw);
+    }
+    .main-stats {
+        display: block;
+    }
+    .main-stat {
+        width: calc(var(--fw) * 0.2 + 76px);
+        padding: 8px calc(var(--fw) * 0.2) 8px 10px;
+        border-radius: 12px 0 0 12px;
+        box-shadow: -6px 8px 18px rgba(8, 20, 43, 0.25);
+        text-align: left;
+    }
+    .main-stat b { font-size: 15px; }
+    .main-stat span { font-size: 9px; margin-top: 3px; }
+}
+/* планшет: холодильник слева, текст справа — сдвигаем всё на ширину плашек */
+@media (min-width: 769px) and (max-width: 1024px) and (min-height: 501px) {
+    .main-conteiner {
+        padding-left: calc(var(--gutter) + 76px);
+    }
+}
+
+/* ===== УЗКИЙ НОУТБУК / ПЛАНШЕТ 769–1024px: холодильник слева, текст справа =====
+   Заголовок 40px не помещался в правую колонку — «ХОЛОДИЛЬНИКОВ» срезалось краем экрана.
+   Кегль плавно уменьшается с шириной; надпись сверху — в одну строку; снежинка — в нижний угол. */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .main-header { font-size: clamp(24px, 3.1vw, 38px); }
+    .main-eyebrow {
+        white-space: nowrap;
+        font-size: 11px;
+        letter-spacing: 0.5px;
+        padding: 7px 12px;
+    }
+    .snowflake {
+        top: auto;
+        bottom: 24px;
+        right: var(--gutter);
+        width: 70px;
+    }
+}
+/* самые узкие телефоны: надпись над заголовком в одну строку и в пределах отступов */
+@media (max-width: 400px) {
+    .main-eyebrow {
+        font-size: 9.5px;
+        letter-spacing: 0.04em;
+        padding: 6px 10px;
+    }
+}
+/* 769–900px: колонка текста узкая — надпись над заголовком может переноситься,
+   иначе она распирала колонку и текст вылезал за правый отступ */
+@media (min-width: 769px) and (max-width: 900px) and (min-height: 501px) {
+    .main-eyebrow { white-space: normal; }
+}
+
+/* телефон и узкий планшет (холодильник над текстом): плашки торчат слева,
+   поэтому центрируем не корпус, а всю группу «плашки + холодильник» —
+   сдвигаем корпус вправо на половину видимой части плашек (76px / 2) */
+@media (max-width: 768px) and (min-height: 501px) {
+    .hero-fridge {
+        left: 38px;
+    }
+}
+
+/* ===== ПЛАШКИ КРУПНЕЕ НА ПЛАНШЕТЕ И ТЕЛЕФОНЕ =====
+   Видимая часть шире, чтобы крупный текст помещался («диагностика» — самая длинная подпись).
+   Сдвиг холодильника/отступ слева меняются вместе с видимой частью. */
+@media (max-width: 1024px) and (min-height: 501px) {
+    .main-stat {
+        width: calc(var(--fw) * 0.2 + 94px);
+        padding-top: 9px;
+        padding-bottom: 9px;
+        padding-left: 12px;
+    }
+    .main-stat b { font-size: 18px; }
+    .main-stat span { font-size: 11px; margin-top: 4px; }
+}
+/* 769–1024px: холодильник слева, текст справа — отступ слева на видимую часть плашек */
+@media (min-width: 769px) and (max-width: 1024px) and (min-height: 501px) {
+    .main-conteiner { padding-left: calc(var(--gutter) + 94px); }
+}
+/* телефон: группа «плашки + холодильник» по центру — сдвиг на половину видимой части */
+@media (max-width: 768px) and (min-height: 501px) {
+    .hero-fridge { left: 32px; }
 }

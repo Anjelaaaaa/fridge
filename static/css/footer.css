@@ -60,6 +60,7 @@ footer {
     background: var(--accent-grad);
     box-shadow: 0 0 22px var(--glow);
     cursor: pointer;
+    /* при наведении чуть увеличивается и ярче светится; форма всегда круглая */
     transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 .circle:hover {

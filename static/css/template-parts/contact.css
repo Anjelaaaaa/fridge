@@ -42,7 +42,8 @@
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: clamp(32px, 4vw, 64px);
-    align-items: start;
+    /* обе колонки одной высоты: карта тянется по левой колонке */
+    align-items: stretch;
 }
 .contact-left,
 .contact-right {
@@ -50,7 +51,8 @@
     flex-direction: column;
     min-width: 0;
 }
-.contact-left { gap: 22px; }
+/* те же промежутки, что в левой колонке «Утилизации» */
+.contact-left { gap: clamp(16px, 1.6vw, 22px); }
 .contact-right { gap: 12px; }
 
 .contact-kicker {
@@ -137,6 +139,8 @@
     box-shadow: 0 6px 18px rgba(30, 94, 255, 0.22);
     transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
     align-self: flex-start;
+    /* кнопка — отдельное действие: отступаем от карточек чуть больше, чем между блоками текста */
+    margin-top: clamp(10px, 1.2vw, 18px);
     height: 68px;
     flex-shrink: 0;
     font-size: clamp(16px, 1.4vw, 20px);
@@ -208,5 +212,24 @@
     .contact-mark {
         height: 360px;
         bottom: 20px;
+    }
+}
+
+/* компьютер: карта не по своим пропорциям, а по высоте левой колонки —
+   раньше 4:3 делало её выше текста, и слева всё было сжато кверху */
+@media (min-width: 901px) {
+    .map {
+        aspect-ratio: auto;
+        flex: 1 1 auto;
+        min-height: 320px;
+    }
+}
+
+
+/* 901–1000px: метка меньше и прижата к низу блока */
+@media (min-width: 901px) and (max-width: 1000px) {
+    .contact-mark {
+        height: min(60%, 420px);
+        bottom: 0;
     }
 }

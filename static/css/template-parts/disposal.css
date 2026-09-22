@@ -146,6 +146,14 @@ a.disposal-button:hover {
     pointer-events: none;
 }
 
+/* 901–1349px: раньше здесь снежинки были мелкими (290–430px), крупные — только с 1350px.
+   Растут плавно с шириной окна и подходят к 760px на 1350px */
+@media (min-width: 901px) and (max-width: 1349px) {
+    .snowflakes {
+        height: clamp(520px, 56vw, 760px);
+        right: clamp(-110px, -8vw, -70px);
+    }
+}
 /* Крупнее снежинки на широких экранах */
 @media (min-width: 1350px) {
     .snowflakes {
@@ -170,14 +178,20 @@ a.disposal-button:hover {
         padding: 12px 18px;
         font-size: 14px;
     }
+    /* на узких экранах снежинки уходили за край почти целиком — видна была полоска */
     .snowflakes {
         opacity: 0.2;
-        right: -80px;
+        height: 560px;
+        right: -20px;
     }
 }
 
 /* телефон: отступы в карточках поменьше — тексту шире, строк меньше */
 @media (max-width: 640px) {
+    .snowflakes {
+        height: 480px;
+        right: -40px;
+    }
     .disposal-card {
         gap: 14px;
         padding: 18px;

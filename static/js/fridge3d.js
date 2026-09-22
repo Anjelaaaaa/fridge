@@ -372,9 +372,22 @@ export function mountFridge(canvas) {
     if (hintVis > 0) {
       hintAnchor.getWorldPosition(lv); lv.project(camera);
       const hx = (lv.x + 1) / 2 * cw, hy = (1 - lv.y) / 2 * chh;
-      // маячок на ручке, плашка справа от него; центр маячка (18px) — ровно на ручке
-      const hh = hint.offsetHeight || 24;
-      hint.style.transform = `translate(${(hx - 9).toFixed(1)}px,${(hy - hh / 2).toFixed(1)}px)`;
+      // маячок на ручке, плашка справа от него; центр маячка (18px) — ровно на ручке.
+      // Если справа до текста героя тесно (узкие экраны) — плашка уходит влево, на дверь.
+      const hw = hint.offsetWidth || 110, hh = hint.offsetHeight || 24;
+      const heroText = canvas.closest('.hero-fridge')?.nextElementSibling;
+      let left = false;
+      const cr = canvas.getBoundingClientRect();
+      const pillRight = cr.left + hx - 9 + hw;
+      if (heroText) {
+        const tr = heroText.getBoundingClientRect();
+        // текст справа от холодильника (десктоп) и плашка до него не дотягивается с запасом 16px
+        left = tr.left > cr.left + hx && pillRight > tr.left - 16;
+      }
+      // на телефоне справа может не хватить экрана
+      if (pillRight > document.documentElement.clientWidth - 8) left = true;
+      hint.classList.toggle('fh--left', left);
+      hint.style.transform = `translate(${(left ? hx - hw + 9 : hx - 9).toFixed(1)}px,${(hy - hh / 2).toFixed(1)}px)`;
     }
     if (!showLabels) parts.forEach(p => { p.el.style.opacity = 0; });
     if (showLabels) {

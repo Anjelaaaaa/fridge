@@ -14,7 +14,6 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <script src="/static/js/reveal.js"></script>
     <script src="/static/js/header.js" defer></script>
-    {% if metrika_id %}<script src="/static/js/metrika.js" data-id="{{ metrika_id }}" async></script>{% endif %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/template-parts/main-page.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/template-parts/about.css') }}">
@@ -104,7 +103,6 @@
     </script>
 </head>
 <body>
-    {% if metrika_id %}<noscript><div><img src="https://mc.yandex.ru/watch/{{ metrika_id }}" style="position:absolute; left:-9999px;" alt=""></div></noscript>{% endif %}
     <header>
         {% include 'header.html' %}
     </header>

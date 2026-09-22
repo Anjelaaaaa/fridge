@@ -31,25 +31,17 @@ if _site_hosts and app.debug:
         "Уберите --debug / FLASK_DEBUG=1 — иначе на сервере открыта консоль отладчика."
     )
 
-# ===== Яндекс Метрика и подтверждение сайта в Вебмастере / Search Console =====
-# Всё задаётся переменными окружения на хостинге — код менять не нужно:
-#   YANDEX_METRIKA_ID=12345678        номер счётчика Метрики (только цифры)
+# ===== Подтверждение сайта в Яндекс Вебмастере / Google Search Console =====
+# Коды задаются переменными окружения на хостинге — код менять не нужно:
 #   YANDEX_VERIFICATION=abc123...      content из <meta name="yandex-verification">
 #   GOOGLE_VERIFICATION=xyz...         content из <meta name="google-site-verification">
-_metrika_id = os.environ.get("YANDEX_METRIKA_ID", "").strip()
-if not _metrika_id.isdigit():
-    _metrika_id = ""
 _yandex_verification = os.environ.get("YANDEX_VERIFICATION", "").strip()
 _google_verification = os.environ.get("GOOGLE_VERIFICATION", "").strip()
-
-# адреса, к которым обращается Метрика (по документации Яндекса) — разрешаем только если она включена
-_METRIKA = "https://mc.yandex.ru https://mc.yandex.com https://yastatic.net"
 
 
 @app.context_processor
 def inject_site_settings():
     return {
-        "metrika_id": _metrika_id,
         "yandex_verification": _yandex_verification,
         "google_verification": _google_verification,
     }
@@ -76,21 +68,19 @@ def inject_csp_nonce():
 @app.after_request
 def set_security_headers(response):
     nonce = getattr(g, "csp_nonce", "")
-    m = (" " + _METRIKA) if _metrika_id else ""
     response.headers["Content-Security-Policy"] = "; ".join([
         "default-src 'self'",
-        f"script-src 'self' 'nonce-{nonce}'{m}",
+        f"script-src 'self' 'nonce-{nonce}'",
         # inline style="--i:N" у анимаций появления
         "style-src 'self' 'unsafe-inline'",
         # шрифты — только свои (static/fonts), без Google
         "font-src 'self'",
-        f"img-src 'self' data:{m}",
-        # карта 2ГИС в «Контактах»; Метрика (вебвизор) использует свои фреймы
-        "frame-src https://makemap.2gis.ru https://*.2gis.ru https://*.2gis.com"
-        + (" blob:" + m if _metrika_id else ""),
-        f"connect-src 'self'{m}" + (" wss://mc.yandex.ru" if _metrika_id else ""),
+        "img-src 'self' data:",
+        # карта 2ГИС в «Контактах»
+        "frame-src https://makemap.2gis.ru https://*.2gis.ru https://*.2gis.com",
+        "connect-src 'self'",
         "manifest-src 'self'",
-        "worker-src 'none'" if not _metrika_id else "worker-src 'self' blob:",
+        "worker-src 'none'",
         "object-src 'none'",
         "base-uri 'self'",
         "form-action 'self'",

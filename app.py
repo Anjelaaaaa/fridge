@@ -17,11 +17,23 @@ if _site_hosts:
     app.config["TRUSTED_HOSTS"] = _site_hosts
     # ссылки для поисковиков и превью — всегда https
     app.config["PREFERRED_URL_SCHEME"] = "https"
-    # На хостинге сайт стоит за прокси (он принимает HTTPS и передаёт запрос дальше по http).
-    # Берём настоящую схему (https) и IP посетителя из заголовков одного доверенного прокси.
-    # Host не подменяем — его по-прежнему проверяет TRUSTED_HOSTS.
+    # На хостинге сайт стоит за прокси: он принимает HTTPS и передаёт запрос дальше по http.
+    # IP посетителя берём из заголовка доверенного прокси (Host не подменяем — его
+    # по-прежнему проверяет TRUSTED_HOSTS).
     from werkzeug.middleware.proxy_fix import ProxyFix
-    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1)
+
+    # Боевой сайт работает только по HTTPS (http перенаправляется, включён HSTS),
+    # поэтому схему задаём сами: заголовку X-Forwarded-Proto доверять нельзя —
+    # у Timeweb его нет, и canonical/sitemap получались с http://
+    class _ForceHttps:
+        def __init__(self, wsgi_app):
+            self.wsgi_app = wsgi_app
+
+        def __call__(self, environ, start_response):
+            environ["wsgi.url_scheme"] = "https"
+            return self.wsgi_app(environ, start_response)
+
+    app.wsgi_app = ProxyFix(_ForceHttps(app.wsgi_app), x_for=1)
 
 # Предохранитель: режим отладки открывает консоль Werkzeug (/console), через которую
 # после подбора PIN можно выполнять любой код на сервере. На боевом сайте — только без отладки.

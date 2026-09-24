@@ -1,4 +1,4 @@
-from flask import Flask, url_for, render_template, g, redirect, Response
+from flask import Flask, url_for, render_template, g, redirect, request, Response
 import os
 import secrets
 from datetime import datetime, timezone
@@ -124,6 +124,25 @@ def set_security_headers(response):
     # не раскрываем версию сервера и Python
     h["Server"] = "FRIDGE"
     return response
+
+
+# ===== Один адрес у сайта: www и прочие зеркала ведут на основной домен =====
+# Без этого fridge-nsk.ru и www.fridge-nsk.ru — два разных сайта для поисковика:
+# каждый объявляет главным себя (canonical и sitemap подставляют адрес запроса),
+# и «вес» страницы делится между ними.
+# Основным считается ПЕРВЫЙ домен в SITE_HOSTS — там должен стоять адрес без www.
+_primary_host = _site_hosts[0] if _site_hosts else ""
+
+
+@app.before_request
+def redirect_to_primary_host():
+    if not _primary_host:
+        return None  # локальная разработка: localhost не трогаем
+    host = request.host.partition(":")[0]
+    if host and host != _primary_host:
+        path = request.full_path if request.query_string else request.path
+        return redirect("https://" + _primary_host + path, code=301)
+    return None
 
 
 @app.route("/")

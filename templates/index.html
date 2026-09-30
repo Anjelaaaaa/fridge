@@ -115,6 +115,32 @@
         {% include 'template-parts/disposal.html' %}
         {% include 'template-parts/contact.html' %}
 
+        <!-- выбор мессенджера для кнопки «Отправить фото» -->
+        <div id="sendModal" class="modal">
+            <div class="modal-content modal-content--send">
+                <span class="modal-close">&times;</span>
+                <div class="send-title">Куда отправить фото</div>
+                <div class="send-text">Пришлите фото холодильника, оценим и ответим</div>
+                <div class="send-links">
+                    <button class="send-link send-link--max" type="button" data-phone="+79137833814" data-phone-text="8 913 783 38 14">
+                        <span>MAX</span>
+                    </button>
+                    <a class="send-link send-link--wa" href="https://wa.me/79137833814" target="_blank" rel="noopener">
+                        <span>WhatsApp</span>
+                    </a>
+                    <a class="send-link send-link--tg" href="https://t.me/+79137833814" target="_blank" rel="noopener">
+                        <span>Telegram</span>
+                    </a>
+                    <a class="send-link send-link--call" href="tel:89529368220"><span>Позвонить</span></a>
+                </div>
+                <div class="send-hint" id="sendHint" role="status"></div>
+                <div class="send-phones">
+                    <div><span class="send-phones-label">Мессенджеры</span> 8&nbsp;913&nbsp;783&nbsp;38&nbsp;14</div>
+                    <div><span class="send-phones-label">Звонки</span> 8&nbsp;952&nbsp;936&nbsp;82&nbsp;20</div>
+                </div>
+            </div>
+        </div>
+
         <div id="phoneModal" class="modal">
             <div class="modal-content">
                 <span class="modal-close">&times;</span>
@@ -186,10 +212,10 @@
         });
     });
 
-    // «Отправить фото» в утилизации: всегда просто показываем номер (и на телефоне тоже)
+    // «Отправить фото» в утилизации: окно с выбором мессенджера (фото шлют в переписку, а не звонком)
     document.querySelector('.disposal-button').addEventListener('click', function(e) {
         e.preventDefault();
-        document.getElementById('phoneModal').classList.add('show');
+        document.getElementById('sendModal').classList.add('show');
     });
 
     // Кружок с трубкой в подвале: на телефоне открывается набор номера (tel:), на компьютере — окно с номером
@@ -202,14 +228,40 @@
         }
     });
 
-    // Закрытие модалки
-    document.querySelector('.modal-close').addEventListener('click', function() {
-        document.getElementById('phoneModal').classList.remove('show');
+    // Кнопка MAX: ссылки на профиль у нас нет, поэтому копируем номер и открываем MAX —
+    // человеку остаётся вставить номер в поиск приложения
+    document.querySelector('.send-link--max').addEventListener('click', function() {
+        const phone = this.dataset.phone;
+        const shown = this.dataset.phoneText;
+        const hint = document.getElementById('sendHint');
+
+        const done = function(ok) {
+            hint.textContent = ok
+                ? 'Номер ' + shown + ' скопирован — вставьте его в поиск MAX'
+                : 'Найдите нас в MAX по номеру ' + shown;
+            hint.classList.add('show');
+            window.open('https://max.ru/', '_blank', 'noopener');
+        };
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(phone).then(function() { done(true); }, function() { done(false); });
+        } else {
+            done(false);
+        }
     });
 
-    document.getElementById('phoneModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            this.classList.remove('show');
+    // Закрытие окон: крестик, клик по фону, Esc
+    document.querySelectorAll('.modal').forEach(function(modal) {
+        modal.querySelector('.modal-close').addEventListener('click', function() {
+            modal.classList.remove('show');
+        });
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) modal.classList.remove('show');
+        });
+    });
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.modal.show').forEach(function(m) { m.classList.remove('show'); });
         }
     });
 </script>

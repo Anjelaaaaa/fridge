@@ -230,3 +230,133 @@ a[href^="tel"] {
     from { opacity: 0; transform: translateY(28px); }
     to   { opacity: 1; transform: none; }
 }
+
+/* ===== ОКНО «КУДА ОТПРАВИТЬ ФОТО» (кнопка «Отправить фото» в утилизации) ===== */
+.modal-content--send {
+    padding: 44px 44px 36px;
+    max-width: min(420px, calc(100vw - 32px));
+    box-sizing: border-box;
+}
+.send-title {
+    color: var(--text);
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.25;
+}
+.send-text {
+    margin-top: 10px;
+    color: var(--text-dim);
+    font-size: 14px;
+    line-height: 1.5;
+}
+.send-links {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 24px;
+}
+/* цвет текста — на span: у tel-ссылок в main.css color: inherit !important */
+.send-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 20px;
+    border-radius: 999px;
+    border: 1px solid var(--card-brd);
+    background: var(--glass);
+    font-size: 16px;
+    font-weight: 600;
+    transition: border-color 0.25s ease, background 0.25s ease, transform 0.2s ease;
+}
+.send-link span { color: var(--text); }
+.send-link:hover {
+    border-color: var(--card-brd-hover);
+    background: rgba(91, 147, 255, 0.12);
+    transform: translateY(-1px);
+}
+/* подсказка после нажатия на MAX */
+.send-hint {
+    display: none;
+    margin-top: 14px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: rgba(91, 147, 255, 0.1);
+    border: 1px solid var(--card-brd);
+    color: var(--text-soft);
+    font-size: 13px;
+    line-height: 1.4;
+}
+.send-hint.show { display: block; }
+
+/* фирменные цвета мессенджеров — по ним кнопки узнаются с первого взгляда */
+.send-link--max {
+    border-color: rgba(123, 97, 255, 0.5);
+    background: rgba(123, 97, 255, 0.14);
+    font-family: inherit;
+    cursor: pointer;
+}
+.send-link--max:hover {
+    border-color: rgba(123, 97, 255, 0.9);
+    background: rgba(123, 97, 255, 0.22);
+}
+.send-link--wa {
+    border-color: rgba(37, 211, 102, 0.5);
+    background: rgba(37, 211, 102, 0.12);
+}
+.send-link--wa:hover {
+    border-color: rgba(37, 211, 102, 0.9);
+    background: rgba(37, 211, 102, 0.2);
+}
+.send-link--tg {
+    border-color: rgba(42, 171, 238, 0.5);
+    background: rgba(42, 171, 238, 0.12);
+}
+.send-link--tg:hover {
+    border-color: rgba(42, 171, 238, 0.9);
+    background: rgba(42, 171, 238, 0.2);
+}
+.send-link--call {
+    border: none;
+    background: var(--btn-grad);
+    box-shadow: 0 6px 18px rgba(30, 94, 255, 0.22);
+}
+.send-link--call span { color: #ffffff; }
+.send-link--call:hover {
+    background: var(--btn-grad);
+    filter: brightness(1.06);
+}
+/* два номера: для переписки и для звонков — чтобы их не путали */
+/* два номера: для переписки и для звонков — подпись мелким шрифтом над номером */
+.send-phones {
+    display: flex;
+    justify-content: center;
+    gap: 22px;
+    margin-top: 20px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    white-space: nowrap;
+}
+.send-phones-label {
+    display: block;
+    margin-bottom: 2px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-mute);
+}
+@media (max-width: 400px) {
+    .send-phones { flex-direction: column; gap: 10px; }
+}
+@media (max-width: 480px) {
+    .modal-content--send { padding: 36px 24px 28px; }
+    .send-title { font-size: 19px; }
+}
+/* в окне выбора мессенджера крестик мельче и в самом углу — иначе наезжал на заголовок */
+.modal-content--send .modal-close {
+    top: 8px;
+    right: 16px;
+    font-size: 30px;
+    line-height: 1;
+}

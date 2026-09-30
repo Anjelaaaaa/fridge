@@ -59,6 +59,35 @@ def inject_site_settings():
     }
 
 
+# ===== Отзывы клиентов =====
+# Лежат в data/reviews.json — чтобы добавить новый отзыв, достаточно дописать файл,
+# вёрстку трогать не нужно. Файл читаем заново, если он изменился (без перезапуска).
+import json
+
+_reviews_path = os.path.join(app.root_path, "data", "reviews.json")
+_reviews_cache = {"mtime": None, "data": {}}
+
+
+def _load_reviews():
+    try:
+        mtime = os.path.getmtime(_reviews_path)
+    except OSError:
+        return {}
+    if _reviews_cache["mtime"] != mtime:
+        try:
+            with open(_reviews_path, encoding="utf-8") as f:
+                _reviews_cache["data"] = json.load(f)
+        except (OSError, ValueError):
+            _reviews_cache["data"] = {}
+        _reviews_cache["mtime"] = mtime
+    return _reviews_cache["data"]
+
+
+@app.context_processor
+def inject_reviews():
+    return {"reviews": _load_reviews()}
+
+
 # сайт не принимает ни форм, ни загрузок — большое тело запроса отбрасываем сразу
 app.config["MAX_CONTENT_LENGTH"] = 16 * 1024
 

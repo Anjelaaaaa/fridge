@@ -41,7 +41,8 @@
 .contact-content {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: clamp(32px, 4vw, 64px);
+    column-gap: clamp(32px, 4vw, 64px);
+    row-gap: clamp(16px, 1.6vw, 22px);
     /* обе колонки одной высоты: карта тянется по левой колонке */
     align-items: stretch;
 }
@@ -208,6 +209,13 @@
 @media (max-width: 900px) {
     .contact-content {
         grid-template-columns: 1fr;
+        row-gap: clamp(20px, 4vw, 28px);
+    }
+    /* на телефоне кнопка уходит под карту и встаёт по центру */
+    .contact-button {
+        justify-self: center;
+        align-self: center;
+        margin-top: 4px;
     }
     .contact-mark {
         height: 360px;
@@ -217,7 +225,12 @@
 
 /* компьютер: карта не по своим пропорциям, а по высоте левой колонки —
    раньше 4:3 делало её выше текста, и слева всё было сжато кверху */
+/* на компьютере кнопка остаётся в левой колонке под карточками,
+   а карта занимает обе строки справа */
 @media (min-width: 901px) {
+    .contact-left { grid-column: 1; grid-row: 1; }
+    .contact-right { grid-column: 2; grid-row: 1 / span 2; }
+    .contact-button { grid-column: 1; grid-row: 2; justify-self: start; align-self: start; }
     .map {
         aspect-ratio: auto;
         flex: 1 1 auto;

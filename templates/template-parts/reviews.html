@@ -1,0 +1,52 @@
+{% if reviews and reviews.get('items') %}
+<section id="reviews">
+    <div class="reviews-conteiner">
+        <div class="reviews-head">
+            <div>
+                <div class="section-kicker" data-reveal style="--i:0">Отзывы</div>
+                <h2 class="section-header" data-reveal style="--i:0">Что говорят клиенты</h2>
+            </div>
+            {% if reviews.get('rating') %}
+            <div class="reviews-score" data-reveal style="--i:1">
+                <div class="reviews-score-num">{{ reviews.rating }}<span>/5</span></div>
+                <div class="stars stars--big" aria-hidden="true">
+                    {% for i in range(5) %}<i class="star"></i>{% endfor %}
+                </div>
+                <div class="reviews-score-text">{{ reviews.count }}&nbsp;отзывов на&nbsp;{{ reviews.source_name }}</div>
+            </div>
+            {% endif %}
+        </div>
+
+        <p class="reviews-lead" data-reveal style="--i:1">Отзывы настоящие. Их&nbsp;оставили клиенты на&nbsp;нашем профиле {{ reviews.source_name }}, каждый можно открыть и&nbsp;прочитать там.</p>
+
+        <div class="reviews-box{% if reviews['items']|length > 6 %} reviews-box--collapsed{% endif %}" id="reviewsBox">
+            <div class="reviews-grid" id="reviewsGrid" data-reveal style="--i:2">
+                {% for r in reviews['items'] %}
+                <article class="review-card{% if loop.index > 6 %} review-card--hidden{% endif %}">
+                    <div class="review-head">
+                        <div class="review-name">{{ r.name }}</div>
+                        <div class="stars" aria-label="Оценка {{ r.stars|default(5) }} из 5">
+                            {% for i in range(r.stars|default(5)) %}<i class="star"></i>{% endfor %}
+                        </div>
+                    </div>
+                    <div class="review-date">{{ r.date }}</div>
+                    {% if r.service %}<div class="review-service">{{ r.service }}</div>{% endif %}
+                    <p class="review-text">{{ r.text }}</p>
+                </article>
+                {% endfor %}
+            </div>
+
+            {% if reviews['items']|length > 6 %}
+            <button class="reviews-more" id="reviewsMore" type="button" aria-expanded="false" aria-controls="reviewsGrid">Показать ещё</button>
+            {% endif %}
+        </div>
+
+        {% if reviews.get('review_url') %}
+        <a class="reviews-write" href="{{ reviews.review_url }}" target="_blank" rel="noopener" data-reveal style="--i:3">
+            <span class="reviews-write-text">Оставить отзыв…</span>
+            <span class="reviews-write-btn">На&nbsp;{{ reviews.source_name }}</span>
+        </a>
+        {% endif %}
+    </div>
+</section>
+{% endif %}

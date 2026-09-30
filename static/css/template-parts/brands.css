@@ -1,0 +1,129 @@
+/* ===== МАРКИ ХОЛОДИЛЬНИКОВ (#brands) — та же схема, что у остальных секций ===== */
+#brands {
+    position: relative;
+    overflow: hidden;
+    background:
+        radial-gradient(ellipse at 80% 20%, var(--glow-spot) 0%, transparent 55%),
+        var(--bg-1);
+    border-top: 1px solid var(--hairline);
+}
+.brands-conteiner {
+    position: relative;
+    z-index: 2;
+    box-sizing: border-box;
+    width: 100%;
+    padding: clamp(40px, 5vw, 70px) var(--gutter);
+}
+.brands-lead {
+    max-width: 780px;
+    margin-top: 16px;
+    color: var(--text-dim);
+    font-size: clamp(15px, 1.15vw, 17px);
+    line-height: 1.65;
+}
+
+/* ===== Бегущие строки марок =====
+   Список продублирован, поэтому сдвиг ровно на половину дорожки повторяется
+   бесшовно. Отступ у плашек сделан margin-right, а не gap, — иначе на стыке
+   копий появлялся бы лишний просвет. */
+.brands-ticker {
+    margin: clamp(28px, 3vw, 40px) calc(var(--gutter) * -1) 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    /* по краям лента растворяется */
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+    mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+}
+.brands-row {
+    overflow: hidden;
+    /* ленту можно тянуть мышью */
+    cursor: grab;
+    -webkit-user-select: none;
+    user-select: none;
+    touch-action: pan-y;
+}
+.brands-row.is-dragging { cursor: grabbing; }
+/* когда лентой управляет скрипт, CSS-анимация не нужна */
+.brands-ticker--js .brands-track { animation: none; }
+.brands-track {
+    display: flex;
+    align-items: stretch;
+    width: max-content;
+    padding: 2px 0;
+    animation: brands-run 58s linear infinite;
+    will-change: transform;
+}
+/* вторая лента едет навстречу первой */
+.brands-row--back .brands-track { animation-direction: reverse; }
+.brands-ticker:hover .brands-track { animation-play-state: paused; }
+@keyframes brands-run {
+    from { transform: translate3d(0, 0, 0); }
+    to { transform: translate3d(-50%, 0, 0); }
+}
+.brand-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-right: 12px;
+    padding: 14px 24px;
+    border-radius: var(--radius-md);
+    background: var(--card-bg);
+    border: 1px solid var(--card-brd);
+    color: var(--blue-4);
+    font-family: inherit;
+    font-size: clamp(15px, 1.25vw, 19px);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: border-color 0.3s ease, color 0.3s ease;
+}
+.brand-logo::before {
+    content: '';
+    flex: 0 0 auto;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--blue-2);
+    box-shadow: 0 0 10px rgba(91, 147, 255, 0.8);
+}
+.brand-logo:hover {
+    border-color: var(--card-brd-hover);
+    color: #ffffff;
+}
+
+/* обещание о цене — отдельной плашкой с синей полосой слева */
+.brands-promise {
+    max-width: 720px;
+    margin-top: clamp(22px, 2.2vw, 30px);
+    padding: 18px 22px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--card-brd);
+    border-left: 3px solid var(--blue);
+    background: linear-gradient(90deg, rgba(30, 94, 255, 0.14) 0%, rgba(30, 94, 255, 0.04) 60%, transparent 100%);
+}
+.brands-promise-kicker {
+    color: var(--blue-2);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+.brands-promise-text {
+    margin-top: 8px;
+    color: var(--text-dim);
+    font-size: clamp(15px, 1.1vw, 16px);
+    line-height: 1.6;
+}
+
+@media (max-width: 820px) {
+    .brand-logo { padding: 12px 18px; margin-right: 10px; }
+    .brands-track { animation-duration: 46s; }
+}
+@media (prefers-reduced-motion: reduce) {
+    /* без анимации ленту можно листать пальцем */
+    .brands-track { animation: none; }
+    .brands-row { overflow-x: auto; }
+}

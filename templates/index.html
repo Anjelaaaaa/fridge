@@ -14,10 +14,16 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <script src="/static/js/reveal.js"></script>
     <script src="/static/js/header.js" defer></script>
+    <script src="/static/js/reviews.js" defer></script>
+    <script src="/static/js/brands.js" defer></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/template-parts/main-page.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/template-parts/about.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/template-parts/services.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/template-parts/brands.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/template-parts/districts.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/template-parts/faq.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/template-parts/reviews.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/template-parts/disposal.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/template-parts/contact.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
@@ -101,6 +107,25 @@
         }
     }
     </script>
+    <!-- вопросы и ответы для поисковиков: тот же текст, что виден на странице -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {"@type": "Question", "name": "Почему холодильник работает, но не морозит?", "acceptedAnswer": {"@type": "Answer", "text": "Чаще всего это утечка фреона, неисправный компрессор или пускозащитное реле. Реже — датчик температуры или плата управления. Точную причину показывает диагностика: мастер проверяет давление в системе, работу мотора и электронику."}},
+            {"@type": "Question", "name": "Почему в морозилке намерзает лёд?", "acceptedAnswer": {"@type": "Answer", "text": "У холодильников с No Frost это обычно сбой системы оттайки: ТЭН, таймер или датчик. У обычных моделей чаще виноват терморегулятор: компрессор не отключается и морозилку затягивает льдом. Что именно — покажет диагностика."}},
+            {"@type": "Question", "name": "Почему под холодильником скапливается вода?", "acceptedAnswer": {"@type": "Answer", "text": "Чаще всего забито дренажное отверстие, и талая вода не уходит в поддон. Реже виноват треснувший лоток или сместившаяся сливная трубка. Прочистка дренажа — недорогая работа, но тянуть не стоит: вода попадает на пол и в изоляцию."}},
+            {"@type": "Question", "name": "Опасно ли, если холодильник сильно шумит или гудит?", "acceptedAnswer": {"@type": "Answer", "text": "Обычно шумит вентилятор обдува испарителя или изношенный компрессор. Иногда дело в том, что холодильник стоит неровно или касается мебели. Если звук появился недавно и стал громче — лучше проверить: работа на износ заканчивается заменой компрессора, а это дороже."}},
+            {"@type": "Question", "name": "Сколько стоит заправка фреоном?", "acceptedAnswer": {"@type": "Answer", "text": "Цена зависит от типа фреона, объёма системы и того, нужно ли искать и запаивать утечку. Просто «долить» фреон без устранения утечки бессмысленно: он уйдёт снова. Точную стоимость мастер называет после диагностики, до начала работ."}},
+            {"@type": "Question", "name": "Платная ли диагностика?", "acceptedAnswer": {"@type": "Answer", "text": "При согласии на ремонт диагностика бесплатная. Мастер приезжает, находит причину и называет стоимость работ. Если ремонтировать вы передумаете, оплачивается только выезд — сумму скажем заранее по телефону."}},
+            {"@type": "Question", "name": "Сколько времени занимает ремонт?", "acceptedAnswer": {"@type": "Answer", "text": "Большинство поломок устраняем на месте за один визит: мастер приезжает с инструментом и ходовыми запчастями. Дольше выходит, если нужна редкая деталь под заказ или ремонт платы в мастерской."}},
+            {"@type": "Question", "name": "Какая гарантия на работу и запчасти?", "acceptedAnswer": {"@type": "Answer", "text": "Гарантия 1 год на все виды работ и установленные запчасти. Если в течение гарантийного срока проявится тот же дефект — приедем и устраним бесплатно."}},
+            {"@type": "Question", "name": "Ремонтируете ли инверторные холодильники?", "acceptedAnswer": {"@type": "Answer", "text": "Да. Инверторный компрессор можно отремонтировать или заменить, а можно поставить вместо него обычный мотор — это дешевле оригинала и проще в дальнейшем обслуживании. Какой вариант выгоднее в вашем случае, скажем после диагностики."}},
+            {"@type": "Question", "name": "Стоит ли ремонтировать старый холодильник?", "acceptedAnswer": {"@type": "Answer", "text": "Часто да: у старых моделей простая механика и недорогие запчасти. Но если ремонт выходит сопоставим со стоимостью рабочего б/у холодильника, мы честно об этом скажем. Нерабочую технику можем забрать: вывозим и утилизируем."}}
+        ]
+    }
+    </script>
 </head>
 <body>
     <header>
@@ -112,6 +137,10 @@
         {% include 'template-parts/about.html' %}
         {% include 'template-parts/repair.html' %}
         {% include 'template-parts/pricing.html' %}
+        {% include 'template-parts/brands.html' %}
+        {% include 'template-parts/districts.html' %}
+        {% include 'template-parts/reviews.html' %}
+        {% include 'template-parts/faq.html' %}
         {% include 'template-parts/disposal.html' %}
         {% include 'template-parts/contact.html' %}
 
@@ -138,6 +167,15 @@
                     <div><span class="send-phones-label">Мессенджеры</span> 8&nbsp;913&nbsp;783&nbsp;38&nbsp;14</div>
                     <div><span class="send-phones-label">Звонки</span> 8&nbsp;952&nbsp;936&nbsp;82&nbsp;20</div>
                 </div>
+            </div>
+        </div>
+
+        <div id="brandModal" class="modal">
+            <div class="modal-content modal-content--brand">
+                <span class="modal-close">&times;</span>
+                <div class="modal-kicker">Частые поломки</div>
+                <div class="modal-brand" id="brandModalName"></div>
+                <p class="modal-brand-text" id="brandModalText"></p>
             </div>
         </div>
 

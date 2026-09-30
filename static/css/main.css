@@ -131,6 +131,9 @@ a[href^="tel"] {
     background: linear-gradient(90deg, var(--accent), var(--accent-2));
 }
 
+/* короткие сочетания, которые нельзя рвать переносом: «б/у» и т.п. */
+.nobr { white-space: nowrap; }
+
 /* Модальное окно */
 
 .modal {
@@ -197,6 +200,38 @@ a[href^="tel"] {
     color: var(--text-dim);
     margin-top: 10px;
 }
+/* окно «частые поломки» — открывается нажатием на марку в блоке «Марки» */
+.modal-content--brand {
+    max-width: min(560px, calc(100vw - 32px));
+    padding: 48px 56px;
+    text-align: left;
+}
+.modal-kicker {
+    color: var(--blue-2);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+.modal-brand {
+    margin-top: 8px;
+    color: var(--text);
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+.modal-brand-text {
+    margin-top: 14px;
+    color: var(--text-dim);
+    font-size: 17px;
+    line-height: 1.6;
+}
+@media (max-width: 520px) {
+    .modal-content--brand { padding: 44px 24px 28px; }
+    .modal-brand { font-size: 24px; }
+    .modal-brand-text { font-size: 15px; }
+}
+
 .modal-call-btn {
     margin-top: 30px;
     padding: 15px 50px;

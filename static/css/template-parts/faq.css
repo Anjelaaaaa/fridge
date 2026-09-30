@@ -1,0 +1,88 @@
+/* ===== ВОПРОСЫ И ОТВЕТЫ (#faq) — раскрывающиеся ответы на <details>, без скриптов ===== */
+#faq {
+    position: relative;
+    overflow: hidden;
+    background:
+        radial-gradient(ellipse at 85% 70%, var(--glow-spot) 0%, transparent 55%),
+        var(--bg-1);
+    border-top: 1px solid var(--hairline);
+}
+.faq-conteiner {
+    position: relative;
+    z-index: 2;
+    box-sizing: border-box;
+    width: 100%;
+    padding: clamp(40px, 5vw, 70px) var(--gutter);
+}
+/* две независимые колонки: раскрытый ответ в одной не двигает вопросы в другой */
+.faq-list {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-top: clamp(28px, 3vw, 40px);
+}
+.faq-col {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.faq-a {
+    max-width: 820px;
+}
+.faq-item {
+    border-radius: var(--radius-md);
+    background: var(--card-bg);
+    border: 1px solid var(--card-brd);
+    transition: border-color 0.3s ease;
+}
+.faq-item[open],
+.faq-item:hover {
+    border-color: var(--card-brd-hover);
+}
+.faq-q {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 18px 22px;
+    color: var(--text);
+    font-size: clamp(16px, 1.2vw, 18px);
+    font-weight: 600;
+    line-height: 1.4;
+    cursor: pointer;
+    list-style: none;
+}
+/* убираем стандартный треугольник и рисуем свой плюс-минус */
+.faq-q::-webkit-details-marker { display: none; }
+.faq-q::after {
+    content: '';
+    flex: none;
+    width: 20px;
+    height: 20px;
+    margin-left: auto;
+    margin-top: 2px;
+    background:
+        linear-gradient(var(--blue-3), var(--blue-3)) center / 14px 2px no-repeat,
+        linear-gradient(var(--blue-3), var(--blue-3)) center / 2px 14px no-repeat;
+    transition: transform 0.25s ease;
+}
+.faq-item[open] .faq-q::after {
+    transform: rotate(135deg);
+}
+.faq-a {
+    padding: 0 22px 20px;
+    color: var(--text-dim);
+    font-size: clamp(14px, 1.05vw, 16px);
+    line-height: 1.6;
+}
+@media (max-width: 900px) {
+    .faq-list { flex-direction: column; }
+}
+@media (max-width: 520px) {
+    .faq-q { padding: 16px 18px; gap: 10px; }
+    .faq-a { padding: 0 18px 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .faq-q::after { transition: none; }
+}

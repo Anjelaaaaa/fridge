@@ -65,6 +65,7 @@
 .service-star--bf { font-family: 'Bagel Fat One', serif; }
 .service-star--cw { font-family: 'Chewy', serif; }
 .service-star--pt { font-family: 'Paytone One', serif; }
+.service-star--to { font-family: 'Train One', serif; }
 
 /* ---------- Частые неисправности: карточки по бокам от холодильника ---------- */
 .faults {
@@ -84,8 +85,11 @@
     position: relative;
     display: flex;
     align-items: center;
-    min-height: 76px;
-    padding: 20px 26px;
+    /* без border-box высота складывалась из min-height и полей —
+       карточки получались на 40px выше, чем задумано */
+    box-sizing: border-box;
+    min-height: 80px;
+    padding: 18px 24px;
     border-radius: var(--radius-md);
     background: var(--card-bg);
     border: 1px solid var(--card-brd);
@@ -340,6 +344,38 @@
 .service-star--bf { --k: 2.326; --cx: 0.255; --cy: 0.255; }
 .service-star--cw { --k: 2.174; --cx: 0.23;  --cy: 0.32; }
 .service-star--pt { --k: 2.174; --cx: 0.245; --cy: 0.37; }
+.service-star--to { --k: 2.128; --cx: 0.25;  --cy: 0.255; }
+/* карточка про торговое оборудование — выделена рамкой и плашкой */
+.service-card--accent {
+    border-color: rgba(91, 147, 255, 0.55);
+    background:
+        radial-gradient(ellipse at 50% 0%, rgba(30, 94, 255, 0.22) 0%, transparent 60%),
+        var(--card-bg);
+}
+.service-card--accent:hover { border-color: var(--blue-2); }
+/* у остальных карточек на месте плашки — пустая строка такой же высоты,
+   поэтому заголовки во всех карточках начинаются на одном уровне */
+.service-card:not(.service-card--accent)::before {
+    content: '';
+    display: block;
+    height: 26px;
+}
+.service-badge {
+    align-self: center;
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    height: 26px;
+    padding: 0 12px;
+    border-radius: 999px;
+    background: rgba(91, 147, 255, 0.16);
+    border: 1px solid rgba(91, 147, 255, 0.45);
+    color: var(--blue-3);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
 .service-title {
     color: var(--text);
     font-size: 20px;

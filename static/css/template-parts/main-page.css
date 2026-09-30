@@ -1054,3 +1054,18 @@ canvas.fridge-main {
 @media (max-width: 768px) and (min-height: 501px) {
     .hero-fridge { left: 32px; }
 }
+
+/* город второй строкой заголовка: для поиска важно слово «Новосибирск» в H1,
+   но кегль меньше — иначе строка не помещается в колонку */
+.main-header-city {
+    display: block;
+    margin-top: 0.12em;
+    font-size: 0.46em;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--text-dim);
+    -webkit-text-fill-color: currentColor;
+}
+@media (max-width: 768px) {
+    .main-header-city { font-size: 0.5em; }
+}

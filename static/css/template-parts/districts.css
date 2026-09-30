@@ -1,0 +1,60 @@
+/* ===== РАЙОНЫ ВЫЕЗДА (#districts) ===== */
+#districts {
+    position: relative;
+    overflow: hidden;
+    background:
+        radial-gradient(ellipse at 20% 30%, var(--glow-spot) 0%, transparent 55%),
+        var(--bg-1);
+    border-top: 1px solid var(--hairline);
+}
+.districts-conteiner {
+    position: relative;
+    z-index: 2;
+    box-sizing: border-box;
+    width: 100%;
+    padding: clamp(40px, 5vw, 70px) var(--gutter);
+}
+.districts-lead {
+    max-width: 780px;
+    margin-top: 16px;
+    color: var(--text-dim);
+    font-size: clamp(15px, 1.15vw, 17px);
+    line-height: 1.65;
+}
+/* плашки районов: компактно и читаемо, в одну ленту */
+.districts-list {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: clamp(28px, 3vw, 40px);
+}
+.districts-list li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 18px;
+    border-radius: 999px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-brd);
+    color: var(--text);
+    font-size: 15px;
+    font-weight: 500;
+    transition: border-color 0.3s ease;
+}
+.districts-list li::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--blue-2);
+    box-shadow: 0 0 8px rgba(30, 94, 255, 0.6);
+    flex: none;
+}
+.districts-list li:hover {
+    border-color: var(--card-brd-hover);
+}
+@media (max-width: 520px) {
+    .districts-list { gap: 8px; }
+    .districts-list li { padding: 9px 14px; font-size: 14px; }
+}

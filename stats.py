@@ -123,7 +123,7 @@ _conn = None
 _TZ = timezone(timedelta(hours=7))
 _KEEP_DAYS = 365
 _visitor_salt = ""
-_secret_path = None
+_secret_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", ".stats_secret")
 _local_password = None
 _login_fails = {}
 _event_times = {}
@@ -154,28 +154,85 @@ def _password():
     return _local_password
 
 
+def _password_source():
+    """Откуда берётся пароль: 'env' — переменная окружения, 'file' — файл на сервере."""
+    if os.environ.get("STATS_PASSWORD") or os.environ.get("STATS_ADMIN_PASSWORD"):
+        return "env"
+    return "file"
+
+
+def _password_looks_like_note():
+    """Похоже, рядом с паролем в файле дописали заметку?
+
+    Пароль сравнивается целиком, поэтому «Q7x пароль от почты» — это не то же
+    самое, что «Q7x». Предупреждаем, но не угадываем: молча принимать часть
+    строки — значит ослаблять пароль.
+    """
+    if _password_source() == "env":
+        return False
+    password = _password()
+    return " " in password.strip() or "\t" in password
+
+
 def _local_password_from_file():
     """Локальный пароль: читаем из data/.stats_secret или создаём и сохраняем."""
     data = {}
+    broken = False
     try:
         with open(_secret_path, encoding="utf-8") as f:
             data = json.load(f)
+    except FileNotFoundError:
+        data = {}
     except (OSError, ValueError, TypeError):
+        broken = True  # файл есть, но прочитать не удалось
         data = {}
     if not isinstance(data, dict):
+        broken = True
         data = {}
+
     password = (data.get("local_password") or "").strip()
-    if password:
+    if password and not broken:
         return password
+
+    if broken:
+        # Молчать нельзя: иначе владелец не поймёт, почему рабочий пароль
+        # перестал подходить. Копию файла сохраняем на случай разбора.
+        print("[статистика] ВНИМАНИЕ: data/.stats_secret прочитать не удалось "
+              "(повреждён или занят другим процессом) — создаётся новый пароль, "
+              "копия файла: data/.stats_secret.broken")
+        try:
+            with open(_secret_path, "rb") as src, open(_secret_path + ".broken", "wb") as dst:
+                dst.write(src.read())
+        except OSError:
+            pass
+
     password = secrets.token_urlsafe(9)
     data["local_password"] = password
-    try:
-        with open(_secret_path, "w", encoding="utf-8") as f:
-            json.dump(data, f)
-        os.chmod(_secret_path, 0o600)
-    except OSError:
-        pass
+    if not _write_secret(_secret_path, data):
+        print("[статистика] ВНИМАНИЕ: пароль не удалось сохранить в data/.stats_secret — "
+              "он будет действовать только до перезапуска. Задайте STATS_PASSWORD.")
+    elif not broken:
+        print("[статистика] создан локальный пароль кабинета, сохранён в data/.stats_secret")
     return password
+
+
+def _write_secret(path, data):
+    """Записываем файл целиком и подменяем: другой процесс не увидит пустой файл."""
+    tmp = path + ".tmp"
+    try:
+        with open(tmp, "w", encoding="utf-8") as f:
+            json.dump(data, f)
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(tmp, path)
+        os.chmod(path, 0o600)
+        return True
+    except OSError:
+        try:
+            os.remove(tmp)
+        except OSError:
+            pass
+        return False
 
 
 def _secret_store(app):
@@ -205,12 +262,9 @@ def _secret_store(app):
         data["visitor_salt"] = secrets.token_hex(16)
         changed = True
     if changed:
-        try:
-            with open(path, "w", encoding="utf-8") as f:
-                json.dump(data, f)
-            os.chmod(path, 0o600)
-        except OSError:
-            pass
+        # пишем через временный файл: читающий процесс не увидит пустой файл
+        # и не создаст из-за этого новый пароль
+        _write_secret(path, data)
     return data
 
 
@@ -502,6 +556,18 @@ def _csrf_token():
     return token
 
 
+def _same_text(first, second):
+    """Сравнение без подсказок по времени ответа, годное для любых символов.
+
+    hmac.compare_digest со строками работает только для ASCII: на пароле с
+    русскими буквами он падал с TypeError (и вход отвечал ошибкой 500).
+    Поэтому сравниваем байты.
+    """
+    if not isinstance(first, str) or not isinstance(second, str):
+        return False
+    return hmac.compare_digest(first.encode("utf-8"), second.encode("utf-8"))
+
+
 def _prune(bucket, window):
     """Чистим память от старых записей, если адресов накопилось слишком много."""
     if len(bucket) < 2000:
@@ -529,32 +595,53 @@ def _login():
 
     ip = (request.remote_addr or "")[:45]
     error = ""
+    reason = ""
     if request.method == "POST":
         if _login_blocked(ip):
+            print(f"[статистика] вход с {ip} заблокирован после {LOGIN_MAX_FAILS} неудачных попыток")
             response = Response(
                 render_template("stats/login.html", error="", blocked=True,
-                                csrf_token=_csrf_token(), path=admin_path()),
+                                csrf_token=_csrf_token(), path=admin_path(),
+                                password_source=_password_source(),
+                                password_note=False),
                 status=429,
             )
             response.headers["Retry-After"] = str(LOGIN_WINDOW)
             return _no_store(response)
 
         token = request.form.get("csrf", "")
-        if not hmac.compare_digest(token, session.get("stats_csrf", "") or ""):
+        saved = session.get("stats_csrf", "")
+        if not saved:
+            # чаще всего это боевой сайт, открытый по http или по IP: кука входа
+            # ставится только для https и только для домена из SITE_HOSTS
+            error = ("Браузер не сохранил куку входа. Откройте кабинет по https:// "
+                     "и по адресу сайта (не по IP), затем войдите снова.")
+            reason = "кука входа не сохранилась (http или чужой адрес)"
+        elif not _same_text(token, saved):
             error = "Сессия устарела, попробуйте ещё раз."
+            reason = "устаревшая сессия"
         else:
             entered = (request.form.get("password") or "").strip()
-            if entered and hmac.compare_digest(entered, _password()):
+            if entered and _same_text(entered, _password()):
                 session.clear()
                 session["stats_admin"] = True
                 session.permanent = True
                 return redirect(url_for("stats_dashboard"))
             _register_fail(ip)
             error = "Неверный пароль."
+            reason = "неверный пароль"
+
+    if reason:
+        where = ("переменная STATS_PASSWORD" if _password_source() == "env"
+                 else "файл data/.stats_secret")
+        print(f"[статистика] неудачный вход с {ip}: {reason}; "
+              f"пароль сервер берёт из: {where}")
 
     return _no_store(Response(render_template(
         "stats/login.html", error=error, blocked=False,
         csrf_token=_csrf_token(), path=admin_path(),
+        password_source=_password_source(),
+        password_note=_password_looks_like_note(),
     )))
 
 
@@ -947,17 +1034,25 @@ def init_stats(app):
 
     app.after_request(_record)
 
-    if not (os.environ.get("STATS_PASSWORD") or os.environ.get("STATS_ADMIN_PASSWORD")):
+    # Откуда сервер берёт пароль — печатаем всегда: это первое, что нужно
+    # проверить, если вход не проходит (особенно на хостинге).
+    if _password_source() == "env":
+        print("[статистика] пароль кабинета взят из переменной окружения STATS_PASSWORD")
+    elif os.environ.get("WERKZEUG_RUN_MAIN") == "true" or not app.debug:
         # при --debug Flask поднимает два процесса (родительский и рабочий).
         # Печатает только рабочий: иначе в консоли два разных пароля и непонятно,
         # какой вводить. Пароль при этом один и тот же — он лежит в файле.
-        if os.environ.get("WERKZEUG_RUN_MAIN") == "true" or not app.debug:
-            print("=" * 68)
-            print("  Статистика посещений: переменная STATS_PASSWORD не задана.")
-            print("  Пароль для входа:", _password())
-            print("  Он сохранён в data/.stats_secret и не меняется при перезапуске.")
-            print("  Свой пароль: задайте STATS_PASSWORD в переменных окружения.")
-            print("  Страница статистики:", prefix + "/")
-            print("=" * 68)
+        print("=" * 68)
+        print("  Статистика посещений: переменная STATS_PASSWORD не задана.")
+        print("  Пароль для входа:", _password())
+        print("  Он сохранён в data/.stats_secret и не меняется при перезапуске.")
+        print("  Свой пароль: задайте STATS_PASSWORD в переменных окружения.")
+        print("  Страница статистики:", prefix + "/")
+        print("=" * 68)
+
+    if _password_looks_like_note():
+        print("[статистика] ВНИМАНИЕ: в data/.stats_secret у пароля есть пробелы — "
+              "похоже, рядом с паролем дописана заметка. Пароль сравнивается целиком, "
+              "вместе с заметкой: в поле входа нужно вводить всю строку.")
 
     return app

@@ -3,6 +3,8 @@ import os
 import secrets
 from datetime import datetime, timezone
 
+from stats import init_stats
+
 app = Flask(__name__)
 
 
@@ -192,6 +194,8 @@ def robots_txt():
     lines = [
         "User-agent: *",
         "Allow: /",
+        # приёмник событий статистики — POST-запрос, роботам он не нужен
+        "Disallow: /api/",
         "",
         "Sitemap: " + url_for("sitemap_xml", _external=True),
         "",
@@ -275,4 +279,11 @@ def internal_server_error(err):
     </body>
 </html>
 ''', 500
+
+
+# ===== Статистика посещений (видна только владельцу) =====
+# Подключаем в самом конце: модуль дописывает свои маршруты (/admin/… и
+# /api/event) и записывает каждый показ страницы в data/visits.db.
+# Пароль кабинета — переменная окружения STATS_PASSWORD, адрес — STATS_PATH.
+init_stats(app)
 

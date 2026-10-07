@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Статистика посещений — FRIDGE</title>
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/stats.css') }}">
+</head>
+<body class="stats-page">
+{% macro bar(value, maxv, cls='') -%}
+    <span class="bar {{ cls }}"><span class="bar-fill" style="width: {{ ((value / maxv * 100) if maxv else 0)|round(1) }}%"></span></span>
+{%- endmacro %}
+{% macro qs(d) -%}{{ url_for('stats_dashboard') }}?days={{ d }}{% if include_bots %}&bots=1{% endif %}{%- endmacro %}
+
+<header class="stats-head">
+    <div class="stats-head-top">
+        <div class="stats-brand">FRIDGE <span>статистика посещений</span></div>
+        <div class="stats-actions">
+            <span class="stats-updated">обновлено {{ now }}</span>
+            <a class="btn" href="{{ url_for('stats_export') }}?days={{ days }}{% if include_bots %}&bots=1{% endif %}">Скачать CSV</a>
+            <a class="btn btn-ghost" href="{{ url_for('stats_self') }}?on={{ 0 if self_excluded else 1 }}">
+                {{ 'Считать мои визиты' if self_excluded else 'Не считать мои визиты' }}
+            </a>
+            <a class="btn btn-ghost" href="{{ url_for('stats_logout') }}">Выйти</a>
+        </div>
+    </div>
+
+    <nav class="stats-periods">
+        {% for d, title in [(1, 'Сегодня'), (7, '7 дней'), (30, '30 дней'), (90, '90 дней'), (365, 'Год')] %}
+            <a class="period{% if days == d %} period-on{% endif %}" href="{{ qs(d) }}">{{ title }}</a>
+        {% endfor %}
+        <a class="period bots{% if include_bots %} period-on{% endif %}"
+           href="{{ url_for('stats_dashboard') }}?days={{ days }}{% if not include_bots %}&bots=1{% endif %}">
+            {{ 'Роботы учитываются' if include_bots else 'Роботы не учитываются' }}
+        </a>
+    </nav>
+</header>
+
+<main class="stats-main">
+
+    {# ---------- карточки ---------- #}
+    <section class="cards">
+        <div class="card card-today">
+            <div class="card-title">Сегодня</div>
+            <div class="card-value">{{ today.views }}</div>
+            <div class="card-sub">показов · {{ today.visitors }} посетителей · {{ today.visits }} визитов</div>
+        </div>
+        <div class="card">
+            <div class="card-title">Вчера</div>
+            <div class="card-value">{{ yesterday.views }}</div>
+            <div class="card-sub">показов · {{ yesterday.visitors }} посетителей · {{ yesterday.visits }} визитов</div>
+        </div>
+        <div class="card card-period">
+            <div class="card-title">За период ({{ range_start[8:] }}.{{ range_start[5:7] }} — {{ range_end[8:] }}.{{ range_end[5:7] }})</div>
+            <div class="card-value">{{ totals.views }}</div>
+            <div class="card-sub">
+                {{ totals.visitors }} посетителей · {{ totals.visits }} визитов ·
+                {{ totals.per_visit }} показов за визит · {{ totals.per_day }} в день
+            </div>
+            {% if charts.spark %}<div class="card-chart">{{ charts.spark|safe }}</div>{% endif %}
+        </div>
+        <div class="card card-accent">
+            <div class="card-title">Звонки и мессенджеры</div>
+            <div class="card-value">{{ totals.events }}</div>
+            <div class="card-sub">нажатий за период — это главный признак живого клиента</div>
+        </div>
+        <div class="card">
+            <div class="card-title">Роботы поисковиков</div>
+            <div class="card-value">{{ totals.bots }}</div>
+            <div class="card-sub">обходов за период (в цифры выше не входят)</div>
+        </div>
+        <div class="card{% if totals.errors %} card-warn{% endif %}">
+            <div class="card-title">Ошибки 4xx/5xx</div>
+            <div class="card-value">{{ totals.errors }}</div>
+            <div class="card-sub">за период, включая заходы на несуществующие адреса</div>
+        </div>
+    </section>
+
+    {# ---------- показы и посетители по дням ---------- #}
+    <section class="panel">
+        <h2>Показы и посетители по дням</h2>
+        {% if charts.daily %}
+            <div class="legend">
+                <span class="legend-item"><span class="dot dot-views"></span>показы страниц</span>
+                <span class="legend-item"><span class="dot dot-visitors"></span>посетители</span>
+                <span class="legend-item"><span class="dot dot-clicks"></span>нажатия «Позвонить»</span>
+                <span class="legend-hint">наведите курсор на день — покажутся точные цифры</span>
+            </div>
+            <div class="chart-scroll">{{ charts.daily|safe }}</div>
+        {% else %}
+            <p class="dim">Показов за этот период нет — график появится с первыми визитами.</p>
+        {% endif %}
+
+        <details class="table-details"{% if days <= 90 %} open{% endif %}>
+            <summary>Таблица по дням</summary>
+            <table class="table table-days">
+                <thead>
+                    <tr>
+                        <th>Дата</th><th></th><th class="num">Показы</th>
+                        <th class="num">Посетители</th><th class="num">Визиты</th><th class="num">Клики</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for d in daily %}
+                    <tr class="{% if d.views %}row-live{% endif %}">
+                        <td class="nowrap">{{ d.label }} <span class="dim">{{ d.weekday }}</span></td>
+                        <td class="barcell">{{ bar(d.views, max_views) }}</td>
+                        <td class="num">{{ d.views }}</td>
+                        <td class="num">{{ d.visitors }}</td>
+                        <td class="num">{{ d.visits }}</td>
+                        <td class="num">{{ d.events or '' }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </details>
+    </section>
+
+    <div class="grid">
+        {# ---------- по часам ---------- #}
+        <section class="panel">
+            <h2>В какое время приходят</h2>
+            {% if charts.hourly %}
+                <div class="chart-scroll">{{ charts.hourly|safe }}</div>
+            {% else %}
+                <p class="dim">Пока нет данных.</p>
+            {% endif %}
+            <p class="note">
+                Пик посещений — около {{ '%02d:00'|format(peak_hour.hour) }} ({{ peak_hour.count }} показов за период).
+                Время новосибирское.
+            </p>
+        </section>
+
+        {# ---------- источники ---------- #}
+        <section class="panel">
+            <h2>Откуда пришли</h2>
+            <div class="donut-row">
+                <div class="donut-box">{{ charts.sources.svg|safe }}</div>
+                <ul class="list legend-list">
+                    {% for s in charts['sources']['items'] %}
+                        {% if s.count %}
+                            <li>
+                                <span class="dot" style="background: {{ s.color }}"></span>
+                                <span class="list-name">{{ s.title }}</span>
+                                <span class="list-count">{{ s.count }}
+                                    <span class="dim">{{ s.percent|round|int }}%</span></span>
+                            </li>
+                        {% endif %}
+                    {% else %}
+                        <li class="dim">Пока нет данных</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            {% if source_hosts %}
+                <h3>Сайты-источники</h3>
+                <ul class="list list-compact">
+                    {% for h in source_hosts %}
+                        <li><span class="list-name">{{ h['source_host'] }}</span><span class="list-count">{{ h['c'] }}</span></li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            {% if search_queries %}
+                <h3>Что искали в поиске</h3>
+                <ul class="list list-compact">
+                    {% for q in search_queries %}
+                        <li><span class="list-name">{{ q['search_query'] }}</span><span class="list-count">{{ q['c'] }}</span></li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </section>
+    </div>
+
+    <div class="grid">
+        {# ---------- страницы ---------- #}
+        <section class="panel">
+            <h2>Страницы</h2>
+            {% set max_path = (paths|map(attribute='c')|max) if paths else 1 %}
+            <ul class="list">
+                {% for p in paths %}
+                    <li>
+                        <div class="list-row">
+                            <span class="list-name">{{ p['path'] }}</span>
+                            <span class="list-count">{{ p['c'] }}</span>
+                        </div>
+                        {{ bar(p['c'], max_path) }}
+                    </li>
+                {% else %}
+                    <li class="dim">Пока нет данных</li>
+                {% endfor %}
+            </ul>
+            {% if missing %}
+                <h3>Несуществующие адреса (404)</h3>
+                <ul class="list list-compact">
+                    {% for m in missing %}
+                        <li><span class="list-name">{{ m['path'] }}</span><span class="list-count">{{ m['c'] }}</span></li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </section>
+
+        {# ---------- техника ---------- #}
+        <section class="panel">
+            <h2>Устройства и браузеры</h2>
+            <div class="donut-row">
+                <div class="donut-box">{{ charts.devices.svg|safe }}</div>
+                <ul class="list legend-list">
+                    {% for d in charts['devices']['items'] %}
+                        {% if d.count %}
+                            <li>
+                                <span class="dot" style="background: {{ d.color }}"></span>
+                                <span class="list-name">{{ d.title }}</span>
+                                <span class="list-count">{{ d.count }}
+                                    <span class="dim">{{ d.percent|round|int }}%</span></span>
+                            </li>
+                        {% endif %}
+                    {% else %}
+                        <li class="dim">Пока нет данных</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="two-lists">
+                <div>
+                    <h3>Системы</h3>
+                    <ul class="list list-compact">
+                        {% for s in systems %}
+                            <li><span class="list-name">{{ s['os'] }}</span><span class="list-count">{{ s['c'] }}</span></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div>
+                    <h3>Браузеры</h3>
+                    <ul class="list list-compact">
+                        {% for b in browsers %}
+                            <li><span class="list-name">{{ b['browser'] }}</span><span class="list-count">{{ b['c'] }}</span></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    {# ---------- события ---------- #}
+    <section class="panel">
+        <h2>Нажатия «Позвонить» и мессенджеры</h2>
+        {% if events %}
+            {% set max_ev = events|map(attribute='count')|max %}
+            <ul class="list">
+                {% for e in events %}
+                    <li>
+                        <div class="list-row">
+                            <span class="list-name">{{ e.title }}</span>
+                            <span class="list-count">{{ e.count }}</span>
+                        </div>
+                        {{ bar(e.count, max_ev) }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="dim">За период нажатий не было.</p>
+        {% endif %}
+
+        {% if recent_events %}
+            <table class="table">
+                <thead><tr><th>Когда</th><th>Что нажали</th><th>Где на странице</th><th>Устройство</th><th>IP</th></tr></thead>
+                <tbody>
+                {% for e in recent_events %}
+                    <tr>
+                        <td class="nowrap">{{ e.time }}</td>
+                        <td>{{ e.event_title }}{% if e.label %} <span class="dim">({{ e.label }})</span>{% endif %}</td>
+                        <td>{{ e.path }}</td>
+                        <td>{{ e.device }}, {{ e.browser }}</td>
+                        <td class="mono">{{ e.ip }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </section>
+
+    {# ---------- последние визиты ---------- #}
+    <section class="panel">
+        <h2>Последние визиты</h2>
+        <div class="table-scroll">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Когда</th><th>Страница</th><th>Источник</th><th>Посетитель</th>
+                        <th>Устройство</th><th>IP</th><th>Код</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for r in recent %}
+                    <tr class="{% if r.is_bot %}row-bot{% endif %}">
+                        <td class="nowrap">
+                            {{ r.time }}
+                            {% if r.session_new %}<span class="tag">новый</span>{% endif %}
+                        </td>
+                        <td>{{ r.path }}</td>
+                        <td>
+                            {{ r.source }}
+                            {% if r.search_query %}<div class="dim">запрос: {{ r.search_query }}</div>
+                            {% elif r.source_host %}<div class="dim">{{ r.source_host }}</div>{% endif %}
+                        </td>
+                        <td class="mono">{{ r.visitor }}</td>
+                        <td>{{ r.device }}, {{ r.os }}, {{ r.browser }}{% if r.is_bot %} <span class="tag tag-bot">робот</span>{% endif %}</td>
+                        <td class="mono">{{ r.ip }}</td>
+                        <td class="{% if r.status >= 400 %}err{% endif %}">{{ r.status }}</td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="7" class="dim">Записей пока нет — статистика начнёт собираться с первого визита.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <footer class="stats-foot">
+        <p>
+            Данные лежат в файле <code>data/visits.db</code> на вашем сервере ({{ db_size }} МБ),
+            записи старше {{ keep_days }} дней удаляются автоматически.
+            Пароль кабинета задаётся переменной окружения <code>STATS_PASSWORD</code>,
+            адрес — <code>STATS_PATH</code>. Страница закрыта от поисковиков
+            и не связана ссылками с сайтом.
+        </p>
+        <p class="dim">
+            Посетитель считается по обезличенному отпечатку (IP + браузер + секрет сервера),
+            визит — заново после 30 минут тишины.
+        </p>
+    </footer>
+</main>
+</body>
+</html>

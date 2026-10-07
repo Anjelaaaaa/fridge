@@ -7,3 +7,7 @@ __pycache__
 *.key
 instance/
 *.pyc
+# статистика посещений и её секреты — только на сервере, не в репозитории
+data/visits.db
+data/visits.db-*
+data/.stats_secret

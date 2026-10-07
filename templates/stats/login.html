@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Статистика сайта — вход</title>
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/stats.css') }}">
+</head>
+<body class="stats-login-page">
+    <main class="login-card">
+        <div class="login-logo">FRIDGE<span>статистика</span></div>
+
+        {% if blocked %}
+            <h1 class="login-title">Слишком много попыток</h1>
+            <p class="login-text">
+                Вход временно заблокирован для вашего адреса — так защищаемся от
+                подбора пароля. Попробуйте через 15 минут.
+            </p>
+            <p class="login-hint">
+                Если пароль забыт: задайте новый в переменной окружения
+                <code>STATS_PASSWORD</code> и перезапустите сайт.
+            </p>
+        {% else %}
+            <h1 class="login-title">Вход только для владельца</h1>
+            <p class="login-text">
+                Эта страница не видна посетителям сайта и закрыта от поисковиков.
+            </p>
+            <form method="post" action="{{ url_for('stats_login') }}" class="login-form">
+                <input type="hidden" name="csrf" value="{{ csrf_token }}">
+                <label for="password">Пароль</label>
+                <input id="password" name="password" type="password" required
+                       autocomplete="current-password" autofocus>
+                {% if error %}<div class="login-error">{{ error }}</div>{% endif %}
+                <button type="submit">Войти</button>
+            </form>
+            <p class="login-hint">
+                Пароль задаётся переменной окружения <code>STATS_PASSWORD</code>.
+                Если она не задана, пароль печатается в консоль сервера при запуске
+                и хранится в <code>data/.stats_secret</code> — при перезапуске он
+                не меняется.
+            </p>
+        {% endif %}
+    </main>
+</body>
+</html>

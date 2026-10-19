@@ -5,100 +5,133 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Статистика посещений — FRIDGE</title>
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+    <meta name="theme-color" content="#08142B">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/stats.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon/favicon.ico') }}" type="image/x-icon">
 </head>
 <body class="stats-page">
 {% macro bar(value, maxv, cls='') -%}
     <span class="bar {{ cls }}"><span class="bar-fill" style="width: {{ ((value / maxv * 100) if maxv else 0)|round(1) }}%"></span></span>
 {%- endmacro %}
 {% macro qs(d) -%}{{ url_for('stats_dashboard') }}?days={{ d }}{% if include_bots %}&bots=1{% endif %}{%- endmacro %}
+{% macro ru(n, one, few, many) -%}
+{%- set n = n|int -%}
+{%- set n10 = n % 10 -%}
+{%- set n100 = n % 100 -%}
+{%- if n10 == 1 and n100 != 11 -%}{{ one }}
+{%- elif n10 >= 2 and n10 <= 4 and (n100 < 12 or n100 > 14) -%}{{ few }}
+{%- else -%}{{ many }}
+{%- endif -%}
+{%- endmacro %}
 
 <header class="stats-head">
-    <div class="stats-head-top">
-        <div class="stats-brand">FRIDGE <span>статистика посещений</span></div>
-        <div class="stats-actions">
-            <span class="stats-updated">обновлено {{ now }}</span>
-            <a class="btn" href="{{ url_for('stats_export') }}?days={{ days }}{% if include_bots %}&bots=1{% endif %}">Скачать CSV</a>
-            <a class="btn btn-ghost" href="{{ url_for('stats_self') }}?on={{ 0 if self_excluded else 1 }}">
-                {{ 'Считать мои визиты' if self_excluded else 'Не считать мои визиты' }}
-            </a>
-            <a class="btn btn-ghost" href="{{ url_for('stats_logout') }}">Выйти</a>
+    <div class="stats-head-inner">
+        <div class="stats-head-top">
+            <div class="stats-brand">
+                FRIDGE
+                <span>статистика посещений</span>
+            </div>
+            <div class="stats-actions">
+                <span class="stats-updated">обновлено {{ now }}</span>
+                <a class="btn" href="{{ url_for('stats_export') }}?days={{ days }}{% if include_bots %}&bots=1{% endif %}">Скачать CSV</a>
+                <a class="btn btn-ghost" href="{{ url_for('stats_self') }}?on={{ 0 if self_excluded else 1 }}">
+                    {{ 'Считать мои визиты' if self_excluded else 'Не считать мои визиты' }}
+                </a>
+                <a class="btn btn-ghost" href="{{ url_for('stats_logout') }}">Выйти</a>
+            </div>
         </div>
-    </div>
 
-    <nav class="stats-periods">
-        {% for d, title in [(1, 'Сегодня'), (7, '7 дней'), (30, '30 дней'), (90, '90 дней'), (365, 'Год')] %}
-            <a class="period{% if days == d %} period-on{% endif %}" href="{{ qs(d) }}">{{ title }}</a>
-        {% endfor %}
-        <a class="period bots{% if include_bots %} period-on{% endif %}"
-           href="{{ url_for('stats_dashboard') }}?days={{ days }}{% if not include_bots %}&bots=1{% endif %}">
-            {{ 'Роботы учитываются' if include_bots else 'Роботы не учитываются' }}
-        </a>
-    </nav>
+        <nav class="stats-periods" aria-label="Период">
+            <div class="period-group">
+                {% for d, title in [(1, 'Сегодня'), (7, '7 дней'), (30, '30 дней'), (90, '90 дней'), (365, 'Год')] %}
+                    <a class="period{% if days == d %} period-on{% endif %}" href="{{ qs(d) }}">{{ title }}</a>
+                {% endfor %}
+            </div>
+            <a class="period bots{% if include_bots %} period-on{% endif %}"
+               href="{{ url_for('stats_dashboard') }}?days={{ days }}{% if not include_bots %}&bots=1{% endif %}">
+                {{ 'Роботы учитываются' if include_bots else 'Роботы не учитываются' }}
+            </a>
+        </nav>
+    </div>
 </header>
 
 <main class="stats-main">
 
-    {# ---------- карточки ---------- #}
-    <section class="cards">
+    {# ---------- главное: люди, а не «показы» ---------- #}
+    <section class="cards cards-lead">
         <div class="card card-today">
-            <div class="card-title">Сегодня</div>
-            <div class="card-value">{{ today.views }}</div>
-            <div class="card-sub">показов · {{ today.visitors }} посетителей · {{ today.visits }} визитов</div>
-        </div>
-        <div class="card">
-            <div class="card-title">Вчера</div>
-            <div class="card-value">{{ yesterday.views }}</div>
-            <div class="card-sub">показов · {{ yesterday.visitors }} посетителей · {{ yesterday.visits }} визитов</div>
+            <div class="card-kicker">Сегодня</div>
+            <div class="card-value">{{ today.visitors }}</div>
+            <div class="card-meaning">{{ ru(today.visitors, 'человек зашёл на сайт', 'человека зашли на сайт', 'человек зашли на сайт') }}</div>
+            <div class="card-sub">Страницу открыли {{ today.views }} {{ ru(today.views, 'раз', 'раза', 'раз') }}</div>
+            <div class="card-compare">Вчера: {{ yesterday.visitors }} {{ ru(yesterday.visitors, 'человек', 'человека', 'человек') }}, страницу открыли {{ yesterday.views }} {{ ru(yesterday.views, 'раз', 'раза', 'раз') }}</div>
         </div>
         <div class="card card-period">
-            <div class="card-title">За период ({{ range_start[8:] }}.{{ range_start[5:7] }} — {{ range_end[8:] }}.{{ range_end[5:7] }})</div>
-            <div class="card-value">{{ totals.views }}</div>
-            <div class="card-sub">
-                {{ totals.visitors }} посетителей · {{ totals.visits }} визитов ·
-                {{ totals.per_visit }} показов за визит · {{ totals.per_day }} в день
-            </div>
+            <div class="card-kicker">За выбранные дни · {{ range_start[8:] }}.{{ range_start[5:7] }} — {{ range_end[8:] }}.{{ range_end[5:7] }}</div>
+            <div class="card-value">{{ totals.visitors }}</div>
+            <div class="card-meaning">{{ ru(totals.visitors, 'человек', 'человека', 'человек') }}</div>
+            <div class="card-sub">Страницу открыли {{ totals.views }} {{ ru(totals.views, 'раз', 'раза', 'раз') }}{% if totals.per_day < 1 %} · реже одного раза в день{% else %} · около {{ totals.per_day }} в день{% endif %}</div>
             {% if charts.spark %}<div class="card-chart">{{ charts.spark|safe }}</div>{% endif %}
         </div>
         <div class="card card-accent">
-            <div class="card-title">Звонки и мессенджеры</div>
+            <div class="card-kicker">Хотели связаться</div>
             <div class="card-value">{{ totals.events }}</div>
-            <div class="card-sub">нажатий за период — это главный признак живого клиента</div>
-        </div>
-        <div class="card">
-            <div class="card-title">Роботы поисковиков</div>
-            <div class="card-value">{{ totals.bots }}</div>
-            <div class="card-sub">обходов за период (в цифры выше не входят)</div>
-        </div>
-        <div class="card{% if totals.errors %} card-warn{% endif %}">
-            <div class="card-title">Ошибки 4xx/5xx</div>
-            <div class="card-value">{{ totals.errors }}</div>
-            <div class="card-sub">за период, включая заходы на несуществующие адреса</div>
+            <div class="card-meaning">{{ ru(totals.events, 'нажатие за эти дни', 'нажатия за эти дни', 'нажатий за эти дни') }}</div>
+            <div class="card-sub">Звонок, окно с номером, мессенджер или «Отправить фото»</div>
         </div>
     </section>
 
-    {# ---------- показы и посетители по дням ---------- #}
+    <section class="glossary">
+        <div>
+            <b>Люди</b>
+            <p>Сколько разных человек зашло. Один телефон или компьютер считается одним человеком, даже если страницу открывали много раз.</p>
+        </div>
+        <div>
+            <b>Открытия страницы</b>
+            <p>Сколько раз страница загрузилась. Обновление тоже считается. Раньше эта цифра называлась «показы» — это не число людей.</p>
+        </div>
+        <div>
+            <b>Заход</b>
+            <p>Один приход на сайт. Если человек ушёл и вернулся через полчаса, это уже новый заход.</p>
+        </div>
+    </section>
+
+    <section class="cards cards-quiet">
+        <div class="card card-quiet">
+            <div class="card-kicker">Поисковые роботы</div>
+            <div class="card-value">{{ totals.bots }}</div>
+            <div class="card-sub">Яндекс и Google заходили сами. В цифры людей это не входит.</div>
+        </div>
+        <div class="card card-quiet{% if totals.errors %} card-warn{% endif %}">
+            <div class="card-kicker">Страница не открылась</div>
+            <div class="card-value">{{ totals.errors }}</div>
+            <div class="card-sub">Ошибки и адреса, которых на сайте нет.</div>
+        </div>
+    </section>
+
     <section class="panel">
-        <h2>Показы и посетители по дням</h2>
+        <h2>По дням</h2>
+        <p class="note note-top">Синяя область — сколько раз открыли страницу. Зелёная линия — сколько было разных людей. Оранжевые столбики внизу — звонки и сообщения.</p>
         {% if charts.daily %}
             <div class="legend">
-                <span class="legend-item"><span class="dot dot-views"></span>показы страниц</span>
-                <span class="legend-item"><span class="dot dot-visitors"></span>посетители</span>
-                <span class="legend-item"><span class="dot dot-clicks"></span>нажатия «Позвонить»</span>
-                <span class="legend-hint">наведите курсор на день — покажутся точные цифры</span>
+                <span class="legend-item"><span class="dot dot-views"></span>открытия страницы</span>
+                <span class="legend-item"><span class="dot dot-visitors"></span>люди</span>
+                <span class="legend-item"><span class="dot dot-clicks"></span>звонки и сообщения</span>
+                <span class="legend-hint">наведите курсор на день — будут точные цифры</span>
             </div>
             <div class="chart-scroll">{{ charts.daily|safe }}</div>
         {% else %}
-            <p class="dim">Показов за этот период нет — график появится с первыми визитами.</p>
+            <p class="dim">За эти дни на сайт никто не заходил.</p>
         {% endif %}
 
-        <details class="table-details"{% if days <= 90 %} open{% endif %}>
+        <details class="table-details">
             <summary>Таблица по дням</summary>
             <table class="table table-days">
                 <thead>
                     <tr>
-                        <th>Дата</th><th></th><th class="num">Показы</th>
-                        <th class="num">Посетители</th><th class="num">Визиты</th><th class="num">Клики</th>
+                        <th>Дата</th><th></th><th class="num">Открытия</th>
+                        <th class="num">Люди</th><th class="num">Заходы</th><th class="num">Звонки</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -120,14 +153,14 @@
     <div class="grid">
         {# ---------- по часам ---------- #}
         <section class="panel">
-            <h2>В какое время приходят</h2>
+            <h2>В какое время заходят</h2>
             {% if charts.hourly %}
                 <div class="chart-scroll">{{ charts.hourly|safe }}</div>
             {% else %}
                 <p class="dim">Пока нет данных.</p>
             {% endif %}
             <p class="note">
-                Пик посещений — около {{ '%02d:00'|format(peak_hour.hour) }} ({{ peak_hour.count }} показов за период).
+                Чаще всего сайт открывают около {{ '%02d:00'|format(peak_hour.hour) }} — {{ peak_hour.count }} раз за выбранные дни.
                 Время новосибирское.
             </p>
         </section>
@@ -203,7 +236,7 @@
 
         {# ---------- техника ---------- #}
         <section class="panel">
-            <h2>Устройства и браузеры</h2>
+            <h2>С каких телефонов и компьютеров</h2>
             <div class="donut-row">
                 <div class="donut-box">{{ charts.devices.svg|safe }}</div>
                 <ul class="list legend-list">
@@ -244,7 +277,7 @@
 
     {# ---------- события ---------- #}
     <section class="panel">
-        <h2>Нажатия «Позвонить» и мессенджеры</h2>
+        <h2>Звонки и сообщения</h2>
         {% if events %}
             {% set max_ev = events|map(attribute='count')|max %}
             <ul class="list">
@@ -259,7 +292,7 @@
                 {% endfor %}
             </ul>
         {% else %}
-            <p class="dim">За период нажатий не было.</p>
+            <p class="dim">За эти дни никто не нажимал телефон и мессенджеры.</p>
         {% endif %}
 
         {% if recent_events %}
@@ -282,12 +315,12 @@
 
     {# ---------- последние визиты ---------- #}
     <section class="panel">
-        <h2>Последние визиты</h2>
+        <h2>Кто заходил последним</h2>
         <div class="table-scroll">
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Когда</th><th>Страница</th><th>Источник</th><th>Посетитель</th>
+                        <th>Когда</th><th>Страница</th><th>Откуда</th><th>Человек</th>
                         <th>Устройство</th><th>IP</th><th>Код</th>
                     </tr>
                 </thead>
@@ -326,8 +359,8 @@
             и не связана ссылками с сайтом.
         </p>
         <p class="dim">
-            Посетитель считается по обезличенному отпечатку (IP + браузер + секрет сервера),
-            визит — заново после 30 минут тишины.
+            Один человек определяется по связке адреса, браузера и секрета сервера, без имени.
+            Новый заход начинается после 30 минут без действий.
         </p>
     </footer>
 </main>

@@ -899,8 +899,8 @@ def _collect(days, include_bots):
     charts = {
         "daily": daily_chart(daily),
         "hourly": hour_chart(hourly),
-        "sources": donut_chart(source_items, center_label="показов"),
-        "devices": donut_chart(device_items, center_label="показов"),
+        "sources": donut_chart(source_items, center_label="открытий"),
+        "devices": donut_chart(device_items, center_label="открытий"),
         "spark": sparkline([d["views"] for d in daily]),
     }
 
@@ -966,7 +966,7 @@ def _export():
         local = datetime.fromtimestamp(row["ts"], _TZ).strftime("%d.%m.%Y %H:%M:%S")
         writer.writerow([
             local,
-            "показ" if row["kind"] == "page" else "событие",
+            "открытие страницы" if row["kind"] == "page" else "звонок или сообщение",
             EVENT_TITLES.get(row["event"], row["event"]) + (
                 f" ({row['label']})" if row["label"] else ""),
             row["path"],

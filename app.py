@@ -1,4 +1,4 @@
-from flask import Flask, url_for, render_template, g, redirect, request, Response
+from flask import Flask, abort, url_for, render_template, g, redirect, request, Response
 import os
 import secrets
 from datetime import datetime, timezone
@@ -228,57 +228,48 @@ def sitemap_xml():
     return Response("\n".join(lines), mimetype="application/xml")
 
 
+def _error_page(code, heading, text, kind):
+    return render_template(
+        "errors/error.html",
+        code=code,
+        heading=heading,
+        text=text,
+        kind=kind,
+    ), code
+
+
 @app.errorhandler(404)
 def not_found(err):
-    style = url_for("static", filename="css/errors/error404.css")
-    path = url_for("static", filename="images/errors/sad.webp")
-    path1 = url_for("static", filename="images/errors/bingo.webp")
-    path2 = url_for("static", filename="images/errors/disgust.jpg")
-    return '''
-<!doctype html>
-<html>
-    <head>
-        <title>Not Found</title>
-        <link rel="stylesheet" href="''' + style + '''">
-    </head>
-    <body>
-        <img class="c" src="''' + path2 + '''">
-        <h1><span class="e">4</span><span class="d">0</span>4</h1>
-        <h2>Ошибка</h2>
-        <div class="a"><img class="a" src="''' + path + '''"></div>
-        <h3>Такой страницы у нас нет, но есть другие!</h3>
-        <div class="b"><img class="b" src="''' + path1 + '''"></div>
-    </body>
-</html>
-''', 404
+    return _error_page(
+        404,
+        "Такой страницы нет",
+        "Вернитесь на главную или позвоните, мы подскажем.",
+        "empty",
+    )
 
 
 @app.errorhandler(500)
 def internal_server_error(err):
-    style = url_for("static", filename="css/errors/error500.css")
-    path = url_for("static", filename="images/errors/simka.png")
-    path1 = url_for("static", filename="images/errors/nolik.png")
-    path2 = url_for("static", filename="images/errors/masya.png")
-    return '''
-<!doctype html>
-<html>
-<head>
-    <title>Internal Server Error</title>
-    <link rel="stylesheet" href="''' + style + '''">
-</head>
-    <body>
-        <img class="a" src="''' + path + '''">
-        <img class="b" src="''' + path1 + '''">
-        <img class="c" src="''' + path2 + '''">
-        <h1><span class="e">5</span><span class="d">0</span>0</h1>
-        <h2>Ошибка</h2>
-        <h3>
-            На нашем сервере произошла небольшая ошибка, вскоре она будет
-            исправлена, мы уже работаем над ней!
-        </h3>
-    </body>
-</html>
-''', 500
+    try:
+        return _error_page(
+            500,
+            "Сайт не открывается",
+            "Позвоните, заявку примем. Холодильник и страницу починим.",
+            "fault",
+        )
+    except Exception:
+        return (
+            "На сервере сбой. Позвоните: 8 966 505 40 64",
+            500,
+            {"Content-Type": "text/plain; charset=utf-8"},
+        )
+
+
+# Локальный предпросмотр макета 500. На хостинге (SITE_HOSTS задан) маршрута нет.
+if not _site_hosts:
+    @app.route("/dev/500")
+    def preview_server_error():
+        abort(500)
 
 
 # ===== Статистика посещений (видна только владельцу) =====

@@ -35,6 +35,8 @@
             <div class="stats-actions">
                 <span class="stats-updated">обновлено {{ now }}</span>
                 <a class="btn" href="{{ url_for('stats_export') }}?days={{ days }}{% if include_bots %}&bots=1{% endif %}">Скачать CSV</a>
+                <a class="btn btn-ghost" href="{{ url_for('stats_export_json') }}">Скачать JSON</a>
+                <a class="btn btn-ghost" href="{{ url_for('stats_export_db') }}">Скачать базу</a>
                 <a class="btn btn-ghost" href="{{ url_for('stats_self') }}?on={{ 0 if self_excluded else 1 }}">
                     {{ 'Считать мои визиты' if self_excluded else 'Не считать мои визиты' }}
                 </a>
@@ -352,8 +354,13 @@
 
     <footer class="stats-foot">
         <p>
-            Данные лежат в файле <code>data/visits.db</code> на вашем сервере ({{ db_size }} МБ),
-            записи старше {{ keep_days }} дней удаляются автоматически.
+            Данные лежат в файле <code>data/visits.db</code> на вашем сервере ({{ db_size }} МБ).
+            {% if keep_days %}Записи старше {{ keep_days }} дней удаляются автоматически.
+            {% else %}Старые записи сами не удаляются.
+            {% endif %}
+            Чтобы цифры пережили деплой, скачайте JSON, пришлите его
+            (или CSV) и положите снимок в проект как <code>data/visits.json</code> —
+            после деплоя история поднимется из этого файла.
             Пароль кабинета задаётся переменной окружения <code>STATS_PASSWORD</code>,
             адрес — <code>STATS_PATH</code>. Страница закрыта от поисковиков
             и не связана ссылками с сайтом.

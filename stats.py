@@ -27,7 +27,7 @@ STATS_PASSWORD   пароль для входа в статистику. Есл�
                  в лог сервера при запуске и не меняется при перезапуске.
 STATS_PATH       адрес кабинета вместо admin (например, s-t-a-t).
 STATS_TZ_OFFSET  часовой сдвиг для «дня» и «часа», по умолчанию 7 (Новосибирск).
-STATS_KEEP_DAYS  сколько дней хранить записи, по умолчанию 365.
+STATS_KEEP_DAYS  сколько дней хранить записи. 0 (по умолчанию) — не удалять.
 STATS_SECRET     ключ подписи куки входа. Если не задан, хранится в
                  data/.stats_secret (файл не попадает в репозиторий).
 """
@@ -41,6 +41,7 @@ import os
 import re
 import secrets
 import sqlite3
+import tempfile
 import threading
 import time
 from collections import deque
@@ -116,12 +117,23 @@ SOURCE_TITLES = {
     "external": "Другие сайты",
     "internal": "Переходы по сайту",
 }
+_KIND_FROM_CSV = {
+    "открытие страницы": "page",
+    "звонок или сообщение": "event",
+}
+_EVENT_FROM_TITLE = {title: key for key, title in EVENT_TITLES.items()}
+_SOURCE_FROM_TITLE = {title: key for key, title in SOURCE_TITLES.items()}
+HIT_FIELDS = (
+    "ts", "day", "hour", "kind", "event", "label", "path", "query", "method",
+    "status", "host", "referer", "source", "source_host", "search_query", "ip",
+    "visitor", "session_new", "ua", "device", "os", "browser", "is_bot",
+)
 
 # ===== состояние модуля =====
 _lock = threading.Lock()
 _conn = None
 _TZ = timezone(timedelta(hours=7))
-_KEEP_DAYS = 365
+_KEEP_DAYS = 0
 _visitor_salt = ""
 _secret_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", ".stats_secret")
 _local_password = None
@@ -351,6 +363,261 @@ def _insert(row):
         _conn.commit()
 
 
+def _seed_json_path(app=None):
+    root = app.root_path if app is not None else os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(root, "data", "visits.json")
+
+
+def _seed_csv_path(app=None):
+    root = app.root_path if app is not None else os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(root, "data", "visits.csv")
+
+
+def _truthy(value):
+    text = str(value or "").strip().lower()
+    return text in ("1", "да", "yes", "true", "истина")
+
+
+def _hit_fingerprint(row):
+    return (
+        int(row.get("ts") or 0),
+        row.get("kind") or "",
+        row.get("event") or "",
+        row.get("label") or "",
+        row.get("path") or "",
+        (row.get("visitor") or "")[:8],
+        row.get("ip") or "",
+        int(row.get("status") or 0),
+    )
+
+
+def _empty_hit():
+    return {
+        "ts": 0,
+        "day": "",
+        "hour": 0,
+        "kind": "page",
+        "event": "",
+        "label": "",
+        "path": "",
+        "query": "",
+        "method": "GET",
+        "status": 200,
+        "host": "",
+        "referer": "",
+        "source": "direct",
+        "source_host": "",
+        "search_query": "",
+        "ip": "",
+        "visitor": "",
+        "session_new": 0,
+        "ua": "",
+        "device": "",
+        "os": "",
+        "browser": "",
+        "is_bot": 0,
+    }
+
+
+def _finalize_hit(row):
+    """Дописывает день и час из времени, если их нет."""
+    try:
+        ts = int(row.get("ts") or 0)
+    except (TypeError, ValueError):
+        ts = 0
+    row["ts"] = ts
+    if ts:
+        local = datetime.fromtimestamp(ts, _TZ)
+        if not row.get("day"):
+            row["day"] = local.strftime("%Y-%m-%d")
+        try:
+            row["hour"] = int(row.get("hour") or local.hour)
+        except (TypeError, ValueError):
+            row["hour"] = local.hour
+    else:
+        row["day"] = row.get("day") or ""
+        try:
+            row["hour"] = int(row.get("hour") or 0)
+        except (TypeError, ValueError):
+            row["hour"] = 0
+    try:
+        row["status"] = int(row.get("status") or 200)
+    except (TypeError, ValueError):
+        row["status"] = 200
+    row["session_new"] = 1 if _truthy(row.get("session_new")) or row.get("session_new") == 1 else 0
+    row["is_bot"] = 1 if _truthy(row.get("is_bot")) or row.get("is_bot") == 1 else 0
+    row["kind"] = row.get("kind") or "page"
+    row["source"] = row.get("source") or "direct"
+    row["method"] = row.get("method") or "GET"
+    for key in HIT_FIELDS:
+        if key in ("ts", "hour", "status", "session_new", "is_bot"):
+            continue
+        row[key] = str(row.get(key) or "")
+    return {key: row.get(key) for key in HIT_FIELDS}
+
+
+def _parse_event_cell(cell):
+    text = (cell or "").strip()
+    if not text:
+        return "", ""
+    for title, key in sorted(_EVENT_FROM_TITLE.items(), key=lambda item: -len(item[0])):
+        if text == title:
+            return key, ""
+        prefix = title + " ("
+        if text.startswith(prefix) and text.endswith(")"):
+            return key, text[len(prefix):-1]
+    return "", text
+
+
+def _parse_csv_datetime(cell):
+    text = (cell or "").strip()
+    for fmt in ("%d.%m.%Y %H:%M:%S", "%d.%m.%Y %H:%M", "%Y-%m-%d %H:%M:%S", "%Y-%m-%dT%H:%M:%S"):
+        try:
+            return datetime.strptime(text, fmt).replace(tzinfo=_TZ)
+        except ValueError:
+            continue
+    return None
+
+
+def _hit_from_csv_row(cells):
+    cells = list(cells) + [""] * max(0, 17 - len(cells))
+    if len(cells) < 17 or not (cells[0] or "").strip():
+        return None
+    when = _parse_csv_datetime(cells[0])
+    if when is None:
+        return None
+    event, label = _parse_event_cell(cells[2])
+    kind = _KIND_FROM_CSV.get((cells[1] or "").strip(), "page")
+    if kind != "page" and not event and (cells[2] or "").strip():
+        event = (cells[2] or "").strip()
+    source_cell = (cells[8] or "").strip()
+    row = _empty_hit()
+    row.update({
+        "ts": int(when.timestamp()),
+        "kind": kind,
+        "event": event,
+        "label": label,
+        "path": (cells[3] or "").strip(),
+        "status": cells[4],
+        "visitor": (cells[5] or "").strip(),
+        "session_new": cells[6],
+        "ip": (cells[7] or "").strip(),
+        "source": _SOURCE_FROM_TITLE.get(source_cell, source_cell or "direct"),
+        "source_host": (cells[9] or "").strip(),
+        "search_query": (cells[10] or "").strip(),
+        "device": (cells[11] or "").strip(),
+        "os": (cells[12] or "").strip(),
+        "browser": (cells[13] or "").strip(),
+        "is_bot": cells[14],
+        "referer": (cells[15] or "").strip(),
+        "ua": (cells[16] or "").strip(),
+    })
+    return _finalize_hit(row)
+
+
+def _hits_from_json_file(path):
+    try:
+        with open(path, encoding="utf-8") as f:
+            payload = json.load(f)
+    except (OSError, ValueError):
+        return []
+    if isinstance(payload, dict):
+        raw_hits = payload.get("hits") or []
+    elif isinstance(payload, list):
+        raw_hits = payload
+    else:
+        return []
+    hits = []
+    for item in raw_hits:
+        if not isinstance(item, dict):
+            continue
+        row = _empty_hit()
+        row.update(item)
+        hits.append(_finalize_hit(row))
+    return hits
+
+
+def _hits_from_csv_file(path):
+    try:
+        with open(path, encoding="utf-8-sig") as f:
+            text = f.read()
+    except OSError:
+        return []
+    return _hits_from_csv_text(text)
+
+
+def _hits_from_csv_text(text):
+    sample = text.lstrip("\ufeff")[:2048]
+    delimiter = ";" if sample.count(";") >= sample.count(",") else ","
+    reader = csv.reader(io.StringIO(text.lstrip("\ufeff")), delimiter=delimiter)
+    hits = []
+    for index, cells in enumerate(reader):
+        if not cells or all(not (cell or "").strip() for cell in cells):
+            continue
+        if index == 0 and "Дата" in (cells[0] or ""):
+            continue
+        hit = _hit_from_csv_row(cells)
+        if hit:
+            hits.append(hit)
+    return hits
+
+
+def merge_visits_csv(csv_path, json_path=None):
+    """Дописывает CSV из кабинета в data/visits.json без дублей. Для снимка перед деплоем."""
+    json_path = json_path or _seed_json_path()
+    existing = _hits_from_json_file(json_path) if os.path.isfile(json_path) else []
+    incoming = _hits_from_csv_file(csv_path)
+    seen = {}
+    for row in existing:
+        key = _hit_fingerprint(row)
+        seen[key] = seen.get(key, 0) + 1
+    added = 0
+    for row in incoming:
+        key = _hit_fingerprint(row)
+        leftover = seen.get(key, 0)
+        if leftover:
+            seen[key] = leftover - 1
+            continue
+        existing.append(row)
+        added += 1
+    existing.sort(key=lambda row: (row["ts"], row["path"], row["visitor"]))
+    os.makedirs(os.path.dirname(json_path), exist_ok=True)
+    payload = {"version": 1, "hits": existing}
+    tmp = json_path + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump(payload, f, ensure_ascii=False, indent=2)
+        f.write("\n")
+    os.replace(tmp, json_path)
+    return len(existing), added
+
+
+def _import_seed_if_empty(app):
+    """После деплоя диск пустой: восстанавливаем историю из JSON/CSV в репозитории."""
+    if _scalar("SELECT COUNT(*) FROM hits"):
+        return
+    json_path = _seed_json_path(app)
+    csv_path = _seed_csv_path(app)
+    hits = _hits_from_json_file(json_path) if os.path.isfile(json_path) else []
+    if os.path.isfile(csv_path):
+        seen = {}
+        for row in hits:
+            key = _hit_fingerprint(row)
+            seen[key] = seen.get(key, 0) + 1
+        for row in _hits_from_csv_file(csv_path):
+            key = _hit_fingerprint(row)
+            leftover = seen.get(key, 0)
+            if leftover:
+                seen[key] = leftover - 1
+                continue
+            hits.append(row)
+    if not hits:
+        return
+    with _lock:
+        _conn.executemany(_INSERT_SQL, hits)
+        _conn.commit()
+    print("[статистика] восстановлено записей из снимка:", len(hits))
+
+
 # ---------------------------------------------------------------- разбор запроса
 def _classify(referer, host):
     """Откуда пришёл человек: поисковик, соцсеть, другой сайт или напрямую."""
@@ -467,7 +734,7 @@ def _should_log_page():
 
 def _cleanup_old(now):
     global _last_cleanup
-    if now - _last_cleanup < 3600:
+    if not _KEEP_DAYS or now - _last_cleanup < 3600:
         return
     _last_cleanup = now
     edge = int(now - _KEEP_DAYS * 86400)
@@ -993,15 +1260,57 @@ def _export():
     return _no_store(response)
 
 
+def _export_db():
+    """Снимок базы для деплоя: файл кладут в data/visits.db и добавляют в git."""
+    if not _logged_in():
+        return redirect(url_for("stats_login"))
+    handle, tmp = tempfile.mkstemp(suffix=".db")
+    os.close(handle)
+    try:
+        with _lock:
+            dst = sqlite3.connect(tmp)
+            try:
+                _conn.backup(dst)
+            finally:
+                dst.close()
+        with open(tmp, "rb") as f:
+            body = f.read()
+    finally:
+        try:
+            os.remove(tmp)
+        except OSError:
+            pass
+    stamp = datetime.now(_TZ).strftime("%Y-%m-%d")
+    response = Response(body, mimetype="application/vnd.sqlite3")
+    response.headers["Content-Disposition"] = (
+        f'attachment; filename="visits-{stamp}.db"')
+    return _no_store(response)
+
+
+def _export_json():
+    """Полный снимок для data/visits.json — его удобно класть в репозиторий перед деплоем."""
+    if not _logged_in():
+        return redirect(url_for("stats_login"))
+    hits = []
+    for row in _q("SELECT * FROM hits ORDER BY ts, id"):
+        hits.append({key: row[key] for key in HIT_FIELDS})
+    body = json.dumps({"version": 1, "hits": hits}, ensure_ascii=False, indent=2)
+    stamp = datetime.now(_TZ).strftime("%Y-%m-%d")
+    response = Response(body, mimetype="application/json; charset=utf-8")
+    response.headers["Content-Disposition"] = (
+        f'attachment; filename="visits-{stamp}.json"')
+    return _no_store(response)
+
+
 # ---------------------------------------------------------------- подключение
 def init_stats(app):
     """Подключает статистику к приложению Flask."""
     global _conn, _TZ, _KEEP_DAYS, _visitor_salt
 
     try:
-        _KEEP_DAYS = max(7, int(os.environ.get("STATS_KEEP_DAYS", "365")))
+        _KEEP_DAYS = max(0, int(os.environ.get("STATS_KEEP_DAYS", "0")))
     except ValueError:
-        _KEEP_DAYS = 365
+        _KEEP_DAYS = 0
     try:
         _TZ = timezone(timedelta(hours=float(os.environ.get("STATS_TZ_OFFSET", "7"))))
     except ValueError:
@@ -1012,6 +1321,7 @@ def init_stats(app):
     with _lock:
         _conn.executescript(_SCHEMA)
         _conn.commit()
+    _import_seed_if_empty(app)
 
     secret = _secret_store(app)
     _visitor_salt = secret["visitor_salt"]
@@ -1029,6 +1339,8 @@ def init_stats(app):
     app.add_url_rule(prefix + "/login", "stats_login", _login, methods=["GET", "POST"])
     app.add_url_rule(prefix + "/logout", "stats_logout", _logout)
     app.add_url_rule(prefix + "/export.csv", "stats_export", _export)
+    app.add_url_rule(prefix + "/visits.db", "stats_export_db", _export_db)
+    app.add_url_rule(prefix + "/visits.json", "stats_export_json", _export_json)
     app.add_url_rule(prefix + "/self", "stats_self", _toggle_self)
     app.add_url_rule("/api/event", "stats_event", _event, methods=["POST"])
 

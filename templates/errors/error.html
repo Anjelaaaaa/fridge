@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ heading }} — FRIDGE</title>
+    <meta name="robots" content="noindex, nofollow, noarchive">
+    <meta name="theme-color" content="#08142B">
+    <link rel="preload" href="{{ url_for('static', filename='fonts/unbounded-cyrillic-c86556.woff2') }}" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/errors.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon/favicon.ico') }}" type="image/x-icon">
+</head>
+<body class="error-page error-{{ kind }}">
+    <header class="error-head">
+        <a class="error-logo" href="{{ url_for('index') }}">FRIDGE</a>
+        <a class="error-phone" href="tel:89665054064">8 966 505 40 64</a>
+    </header>
+
+    <main class="error-main">
+        <div class="error-stage">
+            <div class="hero-fridge" aria-hidden="true">
+                <canvas id="fridge3d" class="fridge-main" role="img" aria-label="3D-холодильник: откройте дверь"></canvas>
+            </div>
+            <div class="error-copy">
+                <p class="error-code">{{ code }}</p>
+                <h1>{{ heading }}</h1>
+                <p class="error-text">{{ text }}</p>
+                <div class="error-actions">
+                    <a class="error-btn" href="{{ url_for('index') }}">На главную</a>
+                    <a class="error-btn error-btn-ghost" href="tel:89665054064">Позвонить</a>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script type="module" src="{{ url_for('static', filename='js/fridge3d.js') }}"></script>
+</body>
+</html>

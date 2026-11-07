@@ -113,22 +113,28 @@ def set_security_headers(response):
     nonce = getattr(g, "csp_nonce", "")
     response.headers["Content-Security-Policy"] = "; ".join([
         "default-src 'self'",
-        f"script-src 'self' 'nonce-{nonce}'",
+        # Яндекс Метрика: tag.js с mc.yandex.ru, части Вебвизора с yastatic.net
+        f"script-src 'self' 'nonce-{nonce}' https://mc.yandex.ru https://yastatic.net",
         # inline style="--i:N" у анимаций появления
         "style-src 'self' 'unsafe-inline'",
         # шрифты — только свои (static/fonts), без Google
         "font-src 'self'",
-        "img-src 'self' data:",
-        # карта 2ГИС в «Контактах»
-        "frame-src https://makemap.2gis.ru https://*.2gis.ru https://*.2gis.com",
-        "connect-src 'self'",
+        "img-src 'self' data: https://mc.yandex.ru https://mc.yandex.com",
+        # карта 2ГИС в «Контактах»; mc.yandex — служебные фреймы Метрики
+        "frame-src https://makemap.2gis.ru https://*.2gis.ru https://*.2gis.com "
+        "blob: https://mc.yandex.ru https://mc.yandex.com",
+        "connect-src 'self' https://mc.yandex.ru https://mc.yandex.com",
         "manifest-src 'self'",
-        "worker-src 'none'",
+        # Вебвизор сжимает запись в фоновом потоке
+        "worker-src blob: https://mc.yandex.ru",
         "object-src 'none'",
         "base-uri 'self'",
         "form-action 'self'",
-        # сайт нельзя встроить в чужую страницу (защита от «обёрток» с подменой)
-        "frame-ancestors 'self'",
+        # сайт нельзя встроить в чужую страницу (защита от «обёрток» с подменой);
+        # исключение — плеер Вебвизора в интерфейсе Метрики
+        "frame-ancestors 'self' https://metrika.yandex.ru https://metrika.yandex.by "
+        "https://metrica.yandex.com https://metrica.yandex.com.tr "
+        "https://webvisor.com https://*.webvisor.com",
     ] + (
         # на боевом сайте: если где-то осталась http-ссылка — браузер сам возьмёт https
         ["upgrade-insecure-requests"] if _site_hosts else []

@@ -38,9 +38,17 @@
         lastSent[key] = now;
         sent++;
 
-        // нажатие «Позвонить» / tel: — считаем конверсией для рекламы
+        // конверсии для рекламы (цели в Метрике с такими идентификаторами)
         if (event === 'phone_click' || event === 'phone_modal') {
             metrikaGoal('phone');
+        } else if (event === 'whatsapp_click') {
+            metrikaGoal('whatsapp');
+        } else if (event === 'telegram_click') {
+            metrikaGoal('telegram');
+        } else if (event === 'max_click') {
+            metrikaGoal('max');
+        } else if (event === 'photo_send') {
+            metrikaGoal('photo');
         }
 
         var body = JSON.stringify({
@@ -96,6 +104,14 @@
         var linkHref = link.getAttribute('href') || '';
         if (linkHref.indexOf('tel:') === 0) {
             send('phone_click', where(link));
+            return;
+        }
+        if (/wa\.me|whatsapp\.com/i.test(linkHref)) {
+            send('whatsapp_click', where(link));
+            return;
+        }
+        if (/t\.me|telegram\.(me|org)/i.test(linkHref)) {
+            send('telegram_click', where(link));
             return;
         }
         if (/^https?:/i.test(linkHref) && link.hostname !== location.hostname) {

@@ -21,6 +21,15 @@
         return (el.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 30);
     }
 
+    // цель в Яндекс Метрике (идентификатор phone) — чтобы Директ видел звонки
+    function metrikaGoal(name) {
+        try {
+            if (typeof ym === 'function') {
+                ym(113938217, 'reachGoal', name);
+            }
+        } catch (e) { /* Метрика не должна мешать посетителю */ }
+    }
+
     function send(event, label) {
         if (sent >= MAX_PER_PAGE) return;
         var key = event + '|' + label;
@@ -28,6 +37,11 @@
         if (lastSent[key] && now - lastSent[key] < DUPLICATE_MS) return;
         lastSent[key] = now;
         sent++;
+
+        // нажатие «Позвонить» / tel: — считаем конверсией для рекламы
+        if (event === 'phone_click' || event === 'phone_modal') {
+            metrikaGoal('phone');
+        }
 
         var body = JSON.stringify({
             event: event,

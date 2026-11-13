@@ -26,7 +26,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/template-parts/districts.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/template-parts/faq.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/template-parts/reviews.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/template-parts/disposal.css') }}">
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/template-parts/disposal.css') }}"> -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/template-parts/contact.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
     <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon/favicon.ico') }}" type="image/x-icon">
@@ -156,7 +156,7 @@
         {% include 'template-parts/districts.html' %}
         {% include 'template-parts/reviews.html' %}
         {% include 'template-parts/faq.html' %}
-        {% include 'template-parts/disposal.html' %}
+        {# {% include 'template-parts/disposal.html' %} #}
         {% include 'template-parts/contact.html' %}
 
         <!-- выбор мессенджера для кнопки «Отправить фото» -->
@@ -266,10 +266,12 @@
     });
 
     // «Отправить фото» в утилизации: окно с выбором мессенджера (фото шлют в переписку, а не звонком)
+    /*
     document.querySelector('.disposal-button').addEventListener('click', function(e) {
         e.preventDefault();
         document.getElementById('sendModal').classList.add('show');
     });
+    */
 
     // Кружок с трубкой в подвале: на телефоне открывается набор номера (tel:), на компьютере — окно с номером
     document.querySelector('.footer-call').addEventListener('click', function(e) {
